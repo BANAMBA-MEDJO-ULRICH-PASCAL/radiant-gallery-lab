@@ -51,6 +51,7 @@ The direction uses a sample name "Mara Ellison" and sample projects. I'll keep t
 - `src/routes/about.tsx` — About page
 - `src/routes/work.tsx` — Work page
 - `src/routes/services.tsx` — Services page
+- `src/routes/pricing.tsx` — Pricing page
 - `src/routes/contact.tsx` — Contact page
 - `src/routes/__root.tsx` — shared warm layout (nav + footer), font `<link>` tags, root head metadata
 - `src/components/` — shared bits (Nav, Footer, ProjectCard, BackgroundOrbs) reused across pages
