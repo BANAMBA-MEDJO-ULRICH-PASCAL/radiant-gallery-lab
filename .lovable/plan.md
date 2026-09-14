@@ -9,7 +9,7 @@ A shared warm layout (sticky nav + footer) wrapping distinct routes, cream paper
 - **`/` (Home)** — Hero (name, one-line identity "software developer × digital advertiser", warm intro, two CTAs) + a short "What I do" teaser + a 2-project highlight strip + CTA to contact
 - **`/about`** — portrait photo beside a personal, note-style bio (not a résumé), with trait chips (Curious, Detail-obsessed, Kind) + a fuller story
 - **`/work`** — all 4 project cards with image, title, short story, tech tags, and "View case" links
-- **`/services`** — two side-by-side cards: Software development (frontend/full-stack, React/TS/Node, accessibility, APIs) and Digital advertising (paid social/search, email flows, warm copy, analytics)
+- **`/services`** — two side-by-side cards: Software development (AI tools, security programs, websites, frontend/full-stack, React/TS/Node, accessibility, APIs) and Digital advertising (paid social/search, email flows, warm copy, analytics)
 - **`/contact`** — a contact form (name, email, message) on the left + direct email link and social buttons (Instagram, LinkedIn, GitHub) on the right
 
 The warm "caustic" light blobs and frosted glass motif carry across every page for consistency. The nav links to each route; the footer repeats name + socials + "Made slowly, with care."
