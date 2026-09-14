@@ -10,6 +10,7 @@ A shared warm layout (sticky nav + footer) wrapping distinct routes, cream paper
 - **`/about`** — portrait photo beside a personal, note-style bio (not a résumé), with trait chips (Curious, Detail-obsessed, Kind) + a fuller story
 - **`/work`** — all 4 project cards with image, title, short story, tech tags, and "View case" links
 - **`/services`** — two side-by-side cards: Software development (AI tools, security programs, websites, frontend/full-stack, React/TS/Node, accessibility, APIs) and Digital advertising (paid social/search, email flows, warm copy, analytics)
+- **`/pricing`** — warm pricing cards for both service lines (Software development packages + Digital advertising packages), each with tier name, short description, price, feature list, and a CTA to contact
 - **`/contact`** — a contact form (name, email, message) on the left + direct email link and social buttons (Instagram, LinkedIn, GitHub) on the right
 
 The warm "caustic" light blobs and frosted glass motif carry across every page for consistency. The nav links to each route; the footer repeats name + socials + "Made slowly, with care."
