@@ -46,9 +46,14 @@ The direction uses a sample name "Mara Ellison" and sample projects. I'll keep t
 
 ## Files I'll touch
 
-- `src/routes/index.tsx` — the whole page (rewrite from placeholder)
+- `src/routes/index.tsx` — Home page (rewrite from placeholder)
+- `src/routes/about.tsx` — About page
+- `src/routes/work.tsx` — Work page
+- `src/routes/services.tsx` — Services page
+- `src/routes/contact.tsx` — Contact page
+- `src/routes/__root.tsx` — shared warm layout (nav + footer), font `<link>` tags, root head metadata
+- `src/components/` — shared bits (Nav, Footer, ProjectCard, BackgroundOrbs) reused across pages
 - `src/styles.css` — add warm palette tokens + font tokens
-- `src/routes/__root.tsx` — font `<link>` tags + head metadata (title/description/og)
 - `src/assets/*` — generated images
 - (If option A) `src/lib/contact.functions.ts` + a `messages` migration + Cloud enable
 
