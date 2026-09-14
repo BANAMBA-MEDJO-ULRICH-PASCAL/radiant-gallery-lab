@@ -10,6 +10,7 @@ A shared warm layout (sticky nav + footer) wrapping distinct routes, cream paper
 - **`/about`** — portrait photo beside a personal, note-style bio (not a résumé), with trait chips (Curious, Detail-obsessed, Kind) + a fuller story
 - **`/work`** — all 4 project cards with image, title, short story, tech tags, and "View case" links
 - **`/services`** — two side-by-side cards: Software development (AI tools, security programs, websites, frontend/full-stack, React/TS/Node, accessibility, APIs) and Digital advertising (paid social/search, email flows, warm copy, analytics)
+- **`/pricing`** — warm pricing cards for both service lines (Software development packages + Digital advertising packages), each with tier name, short description, price, feature list, and a CTA to contact
 - **`/contact`** — a contact form (name, email, message) on the left + direct email link and social buttons (Instagram, LinkedIn, GitHub) on the right
 
 The warm "caustic" light blobs and frosted glass motif carry across every page for consistency. The nav links to each route; the footer repeats name + socials + "Made slowly, with care."
@@ -50,6 +51,7 @@ The direction uses a sample name "Mara Ellison" and sample projects. I'll keep t
 - `src/routes/about.tsx` — About page
 - `src/routes/work.tsx` — Work page
 - `src/routes/services.tsx` — Services page
+- `src/routes/pricing.tsx` — Pricing page
 - `src/routes/contact.tsx` — Contact page
 - `src/routes/__root.tsx` — shared warm layout (nav + footer), font `<link>` tags, root head metadata
 - `src/components/` — shared bits (Nav, Footer, ProjectCard, BackgroundOrbs) reused across pages
@@ -59,4 +61,4 @@ The direction uses a sample name "Mara Ellison" and sample projects. I'll keep t
 
 ## Out of scope (per your selections)
 
-No testimonials, no pricing, no blog, no "trusted by" logos.
+No testimonials, no blog, no "trusted by" logos.
