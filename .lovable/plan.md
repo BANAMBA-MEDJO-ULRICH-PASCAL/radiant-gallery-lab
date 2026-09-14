@@ -61,4 +61,4 @@ The direction uses a sample name "Mara Ellison" and sample projects. I'll keep t
 
 ## Out of scope (per your selections)
 
-No testimonials, no pricing, no blog, no "trusted by" logos.
+No testimonials, no blog, no "trusted by" logos.
