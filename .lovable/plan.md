@@ -1,17 +1,18 @@
 # Portfolio Build Plan — "Warm Letterpress Journal"
 
-A single-page personal portfolio for a software developer + digital advertising agent, in the warm, story-driven direction you selected. TanStack Start + Tailwind v4, one scrolling page at `/`.
+A multi-page personal portfolio for a software developer + digital advertising agent, in the warm, story-driven direction you selected. TanStack Start + Tailwind v4, several routes sharing one warm layout.
 
 ## What you'll see
 
-One warm-toned page, cream paper background with soft blurred teal light behind frosted glass panels, scrolling through five sections:
+A shared warm layout (sticky nav + footer) wrapping distinct routes, cream paper background with soft blurred teal light behind frosted glass panels:
 
-1. **Hero** — name, one-line identity ("software developer × digital advertiser"), warm intro, two CTAs (Start a conversation / See the work)
-2. **About** — portrait photo beside a personal, note-style bio (not a résumé), with trait chips (Curious, Detail-obsessed, Kind)
-3. **Selected work** — 4 project cards with image, title, short story, tech tags, and a "View case" link
-4. **What I do** — two side-by-side cards: Software development (frontend/full-stack, React/TS/Node, accessibility, APIs) and Digital advertising (paid social/search, email flows, warm copy, analytics)
-5. **Contact** — a contact form (name, email, message) on the left + direct email link and social buttons (Instagram, LinkedIn, GitHub) on the right
-6. **Footer** — name, socials, "Made slowly, with care."
+- **`/` (Home)** — Hero (name, one-line identity "software developer × digital advertiser", warm intro, two CTAs) + a short "What I do" teaser + a 2-project highlight strip + CTA to contact
+- **`/about`** — portrait photo beside a personal, note-style bio (not a résumé), with trait chips (Curious, Detail-obsessed, Kind) + a fuller story
+- **`/work`** — all 4 project cards with image, title, short story, tech tags, and "View case" links
+- **`/services`** — two side-by-side cards: Software development (frontend/full-stack, React/TS/Node, accessibility, APIs) and Digital advertising (paid social/search, email flows, warm copy, analytics)
+- **`/contact`** — a contact form (name, email, message) on the left + direct email link and social buttons (Instagram, LinkedIn, GitHub) on the right
+
+The warm "caustic" light blobs and frosted glass motif carry across every page for consistency. The nav links to each route; the footer repeats name + socials + "Made slowly, with care."
 
 ## Design tokens (carried from the chosen direction)
 
@@ -45,12 +46,17 @@ The direction uses a sample name "Mara Ellison" and sample projects. I'll keep t
 
 ## Files I'll touch
 
-- `src/routes/index.tsx` — the whole page (rewrite from placeholder)
+- `src/routes/index.tsx` — Home page (rewrite from placeholder)
+- `src/routes/about.tsx` — About page
+- `src/routes/work.tsx` — Work page
+- `src/routes/services.tsx` — Services page
+- `src/routes/contact.tsx` — Contact page
+- `src/routes/__root.tsx` — shared warm layout (nav + footer), font `<link>` tags, root head metadata
+- `src/components/` — shared bits (Nav, Footer, ProjectCard, BackgroundOrbs) reused across pages
 - `src/styles.css` — add warm palette tokens + font tokens
-- `src/routes/__root.tsx` — font `<link>` tags + head metadata (title/description/og)
 - `src/assets/*` — generated images
 - (If option A) `src/lib/contact.functions.ts` + a `messages` migration + Cloud enable
 
 ## Out of scope (per your selections)
 
-No testimonials, no pricing, no blog, no "trusted by" logos. Single page only.
+No testimonials, no pricing, no blog, no "trusted by" logos.
