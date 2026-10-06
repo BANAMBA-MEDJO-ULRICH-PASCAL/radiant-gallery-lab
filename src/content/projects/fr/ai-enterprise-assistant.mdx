@@ -1,0 +1,99 @@
+---
+title: "Assistant IA d'entreprise"
+pillar: "ai-tools"
+alsoPillars: ["security", "web-apps"]
+summary: "Un backend FastAPI multi-tenant pour un assistant IA auquel les entreprises peuvent confier leurs documents : isolation des données par organisation, réponses augmentées par recherche documentaire, et une couche de gouvernance avec journaux d'audit, quotas et garde-fous contre l'injection de prompt."
+status: "in-progress"
+planned:
+  - "Interface front-end — chat, bibliothèque de documents et vue d'administration des journaux de gouvernance"
+  - "Réponses en streaming, affichées au fur et à mesure de leur génération"
+  - "Tableau de bord analytique par organisation, construit sur les journaux d'interaction"
+role: "Seul — architecture, développement, tests et CI"
+period: "2026 — en cours"
+date: 2026-09-20
+teamSize: 1
+stack:
+  - "Python"
+  - "FastAPI"
+  - "PostgreSQL"
+  - "SQLAlchemy"
+  - "Alembic"
+  - "ChromaDB"
+  - "Google Gemini"
+  - "Docker"
+  - "pytest"
+  - "GitHub Actions"
+results:
+  - "Isolation vectorielle par organisation — une collection ChromaDB par client, aucun document d'une entreprise ne peut apparaître dans les réponses d'une autre"
+  - "Couche de gouvernance complète : journaux d'interaction persistants, quotas journaliers, limitation de débit et garde-fous anti-injection"
+  - "Les tests s'exécutent dans un schéma Postgres jetable et simulent le LLM : ils ne touchent jamais aux données réelles ni au quota d'API"
+  - "Installation Docker en une commande, qui migre la base et démarre l'API automatiquement"
+featured: false
+order: 30
+---
+
+## Le problème
+
+Les entreprises veulent un assistant IA capable de répondre à partir de leurs
+propres documents. Ce qui les retient n'est pas la capacité technique, c'est la
+confiance. Trois questions reviennent systématiquement, et un chatbot de
+démonstration n'en résout aucune :
+
+1. Les données d'une autre entreprise peuvent-elles apparaître dans nos réponses ?
+2. Qui a demandé quoi à l'IA, et quand ?
+3. Qu'est-ce qui empêche quelqu'un de glisser des instructions dans un document
+   pour détourner le modèle ?
+
+J'ai construit le backend autour de ces questions plutôt que d'y répondre après
+coup.
+
+## L'approche
+
+**Le multi-tenant comme fondation, pas comme filtre.** Les utilisateurs
+appartiennent à des organisations via des adhésions explicites, avec des rôles
+par organisation. Surtout, le magasin vectoriel est lui aussi partitionné :
+**chaque organisation dispose de sa propre collection ChromaDB**. L'isolation est
+donc structurelle — une requête de recherche ne peut physiquement pas atteindre
+les vecteurs d'un autre client. Un filtre `WHERE org_id = ?` n'est qu'à une
+clause oubliée d'une fuite de données grave ; une collection distincte, non.
+
+**Un traitement documentaire sérieux.** L'import extrait le texte, le découpe en
+fragments, les vectorise et les stocke avec leur document source, afin que chaque
+réponse puisse être tracée jusqu'à son origine.
+
+**Une vraie couche de gouvernance.** C'est ce qui distingue un outil adoptable
+en entreprise d'une démonstration :
+
+- **Journaux d'interaction persistants** — chaque appel à l'IA est enregistré,
+  constituant une piste d'audit
+- **Quotas d'usage journaliers** par organisation, pour qu'une équipe ne consomme
+  pas tout le budget
+- **Limitation de débit** sur la surface d'API
+- **Garde-fous contre l'injection de prompt** sur le contenu récupéré : le texte
+  qui revient d'un document est une entrée non fiable, pas une instruction
+
+**Analyse de données structurées.** Au-delà du dialogue documentaire, les données
+tabulaires importées sont analysées avec pandas pour produire des indicateurs
+calculés, plutôt que de demander au modèle une arithmétique sur laquelle il est
+peu fiable.
+
+## Comment c'est testé
+
+La suite de tests s'exécute sur une véritable instance PostgreSQL, mais dans un
+**schéma jetable**, créé avant la série et supprimé après : elle ne touche jamais
+aux tables existantes. Gemini n'est jamais appelé réellement — le chat et les
+vectorisations sont simulés, et une fausse clé d'API est imposée volontairement
+afin qu'un appel réel accidentel **échoue bruyamment au lieu de consommer
+silencieusement du quota**.
+
+GitHub Actions exécute l'ensemble de la suite à chaque push, sur un conteneur
+PostgreSQL jetable. Les changements de schéma passent par des migrations Alembic,
+et `docker compose up --build` démarre Postgres, applique les migrations et lance
+l'API en une seule commande.
+
+## Où en est le projet
+
+**Le backend est terminé ; il n'y a pas encore d'interface.** Tout ce qui précède
+s'utilise via l'API et sa documentation interactive à `/docs`. Le front-end est
+le prochain chantier : jusque-là, ce projet est un moteur bien testé plutôt qu'un
+produit utilisable hors du terminal.

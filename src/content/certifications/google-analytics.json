@@ -10,5 +10,6 @@
   "issuer": "Google",
   "area": "analytics",
   "badge": "../../assets/certifications/google-analytics.png",
+  "needsRenewal": true,
   "order": 30
 }

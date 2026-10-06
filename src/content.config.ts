@@ -105,10 +105,16 @@ const certifications = defineCollection({
       issued: z.coerce.date().optional(),
       /**
        * Google Ads certifications lapse one year after completion. When this is
-       * set and in the past, the card is labelled as expired rather than
+       * set and in the past, the card is labelled for renewal rather than
        * quietly presenting a lapsed credential as current.
        */
       expires: z.coerce.date().optional(),
+      /**
+       * Same effect as a past `expires`, for when the credential is known to
+       * have lapsed but the exact date isn't to hand — better than inventing
+       * a date to trigger the label.
+       */
+      needsRenewal: z.boolean().default(false),
       credentialUrl: z.string().url().optional(),
       order: z.number().default(100),
     }),

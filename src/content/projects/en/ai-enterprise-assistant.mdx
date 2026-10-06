@@ -1,0 +1,91 @@
+---
+title: "AI Enterprise Assistant"
+pillar: "ai-tools"
+alsoPillars: ["security", "web-apps"]
+summary: "A multi-tenant FastAPI backend for an AI assistant businesses can actually trust with their documents: per-organisation data isolation, retrieval-augmented answers, and a governance layer covering audit logs, rate limits, quotas and prompt-injection guardrails."
+status: "in-progress"
+planned:
+  - "Front-end interface — chat, document library, and an admin view of the governance logs"
+  - "Streaming responses, so answers appear as they are generated"
+  - "Organisation-level analytics dashboard built on the interaction logs"
+role: "Solo — architecture, implementation, tests and CI"
+period: "2026 — ongoing"
+date: 2026-09-20
+teamSize: 1
+stack:
+  - "Python"
+  - "FastAPI"
+  - "PostgreSQL"
+  - "SQLAlchemy"
+  - "Alembic"
+  - "ChromaDB"
+  - "Google Gemini"
+  - "Docker"
+  - "pytest"
+  - "GitHub Actions"
+results:
+  - "Per-organisation vector isolation — one ChromaDB collection per tenant, so no company's documents can surface in another's answers"
+  - "Full governance layer: persistent AI interaction logs, daily usage quotas, rate limiting and prompt-injection guardrails"
+  - "Test suite runs against a throwaway Postgres schema and fakes the LLM, so tests never touch real data or spend API quota"
+  - "One-command Docker setup that migrates the database and starts the API automatically"
+featured: false
+order: 30
+---
+
+## The problem
+
+Businesses want an AI assistant that can answer questions about their own
+documents. What stops most of them is not capability — it's trust. Three
+questions come up every time, and a demo-grade chatbot answers none of them:
+
+1. Can another company's data ever appear in our answers?
+2. Who asked the AI what, and when?
+3. What stops someone pasting instructions into a document to hijack the model?
+
+I built the backend around those questions rather than bolting answers on later.
+
+## The approach
+
+**Multi-tenancy as the foundation, not a filter.** Users belong to organisations
+through explicit memberships with per-organisation roles. Critically, the vector
+store is partitioned too: **each organisation gets its own ChromaDB collection**.
+Isolation is therefore structural — a retrieval query physically cannot reach
+another tenant's embeddings. A `WHERE org_id = ?` filter is one forgotten clause
+away from a serious data leak; a separate collection is not.
+
+**Documents, properly processed.** Upload extracts text, splits it into chunks,
+embeds them, and stores them with their source document so answers can be traced
+back to where they came from.
+
+**A real governance layer.** This is the part that distinguishes a tool a company
+can adopt from a demo:
+
+- **Persistent interaction logs** — every AI call recorded, so there's an audit trail
+- **Daily usage quotas** per organisation, so one team can't exhaust the budget
+- **Rate limiting** on the API surface
+- **Prompt-injection guardrails** on retrieved content, because the text coming
+  back from a document is untrusted input, not instructions
+
+**Structured data insights.** Beyond document chat, uploaded tabular data is
+analysed with pandas to produce computed insights rather than asking the model to
+do arithmetic it is unreliable at.
+
+## How it's tested
+
+The test suite runs against a real PostgreSQL instance but inside a **throwaway
+schema**, created before the run and dropped after, so it never touches existing
+tables. Gemini is never called for real: chat and embeddings are faked, and a
+dummy API key is forced deliberately, so an accidental live call **fails loudly
+instead of quietly spending quota**.
+
+GitHub Actions runs the whole suite on every push against a fresh disposable
+Postgres service container. Database schema changes go through Alembic
+migrations, and `docker compose up --build` brings up Postgres, applies the
+migrations and starts the API in one command.
+
+## Where it stands
+
+**The backend is complete; there is no interface yet.** Everything above is
+exercised through the API and its interactive docs at `/docs`. The front end is
+the next piece of work, and until it exists this project is a well-tested engine
+rather than a product someone outside the terminal can use.

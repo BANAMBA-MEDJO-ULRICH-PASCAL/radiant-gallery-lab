@@ -1,0 +1,97 @@
+---
+title: "CAMRAIL Traffic Planning Simulator"
+pillar: "web-apps"
+alsoPillars: ["web-development"]
+summary: "A railway timetable simulator for Cameroon's single-track network: it detects every scheduling conflict automatically, computes a conflict-free plan using graph colouring, then recalculates the whole timetable when an incident is injected."
+status: "shipped"
+role: "Solo — modelling, algorithms, API and interface"
+period: "2026"
+date: 2026-08-15
+teamSize: 1
+stack:
+  - "Python"
+  - "FastAPI"
+  - "Graph colouring (Welsh–Powell, DSATUR)"
+  - "Leaflet"
+  - "JavaScript"
+results:
+  - "Models the real TRANSCAM I + II corridor — Douala ⇄ Yaoundé ⇄ Ngaoundéré"
+  - "Detects eight distinct conflict types automatically, from head-on crossings to cascading knock-on delays"
+  - "Produces a conflict-free timetable by reducing scheduling to graph colouring"
+  - "Recalculates the full plan live when an incident is injected, at up to ×60 simulated speed"
+cover: "../../../assets/projects/camrail-simulator/simulator-interface.png"
+coverAlt: "The simulator interface: a map of the Cameroonian rail network with twelve train circulations listed and an incident simulation panel"
+gallery:
+  - src: "../../../assets/projects/camrail-simulator/conflict-graph.png"
+    alt: "Conflict graph where each node is a train movement and each edge an incompatibility"
+    caption: "The conflict graph. Every edge is a pair of movements that cannot share a resource."
+  - src: "../../../assets/projects/camrail-simulator/train-diagram.png"
+    alt: "Train graph plotting distance against time for every circulation"
+    caption: "The train diagram — the classic distance-against-time view a dispatcher reads."
+  - src: "../../../assets/projects/camrail-simulator/dsatur-colouring.png"
+    alt: "Graph coloured by the DSATUR algorithm, each colour a conflict-free time slot"
+    caption: "DSATUR colouring. Each colour is a slot in which those movements can run safely together."
+  - src: "../../../assets/projects/camrail-simulator/incident-simulation.png"
+    alt: "The timetable after a 45-minute delay has been injected and schedules recalculated"
+    caption: "After injecting a 45-minute delay, the plan is recomputed rather than merely shifted."
+featured: true
+order: 20
+---
+
+## The problem
+
+Most of CAMRAIL's network is **single track**. That one fact makes railway
+scheduling genuinely hard: two trains travelling in opposite directions on the
+same section don't just inconvenience each other, they cannot both exist there.
+Every crossing has to be planned into a passing loop in advance.
+
+Plan a dozen circulations across that corridor by hand and the combinations get
+away from you quickly. And the moment one train is 45 minutes late, the plan you
+spent hours building is wrong — not slightly wrong, but wrong in a cascade, as
+each knocked-back train collides with the next one's reserved slot.
+
+## The approach
+
+**Model the network properly first.** Stations, sections, passing loops, platform
+capacity and rolling-stock rotations are all represented explicitly, because a
+conflict you haven't modelled is a conflict you cannot detect.
+
+**Then classify the conflicts.** The simulator detects eight distinct types, each
+with its own detection rule and its own explanatory page in the interface:
+head-on crossing, overtaking, catching up, passing-loop avoidance,
+platform-at-station contention, equipment-rotation conflicts, resource
+unavailability, and cascade effects where one delay propagates through the day.
+
+**Reduce the scheduling to graph colouring.** This is the heart of it. Build a
+graph in which every node is a train movement and every edge joins two movements
+that cannot happen at once. A valid conflict-free timetable is then exactly a
+**proper colouring** of that graph — adjacent nodes must differ, and each colour
+becomes a safe time slot.
+
+I implemented two classic heuristics so their behaviour could be compared on the
+same network: **Welsh–Powell**, which colours greedily in descending degree
+order, and **DSATUR**, which picks the most saturated vertex next and generally
+uses fewer colours — meaning a tighter timetable.
+
+**Then break it on purpose.** The simulator injects a delay on any chosen train
+from any chosen station and recalculates the entire plan, so you can watch the
+knock-on effects propagate instead of theorising about them.
+
+## The interface
+
+The backend serves the site directly: a Leaflet map of the real corridor,
+twelve circulations colour-coded by service type (Express, Semi-direct, Freight,
+Night), playback from ×4 to ×60, and a panel to declare an incident and watch the
+network respond.
+
+There are also dedicated pages explaining the project's rationale and the
+methodology behind it — because a simulator a dispatcher can't interpret isn't
+much use, however correct the algorithm underneath.
+
+## What I took from it
+
+The real lesson was that the hard part isn't the algorithm. Graph colouring is
+textbook. The hard part is **modelling the domain accurately enough that the
+algorithm is solving the right problem** — getting passing loops, platform
+occupancy and equipment rotations into the graph correctly. A beautifully
+coloured graph of the wrong constraints is a very convincing wrong answer.

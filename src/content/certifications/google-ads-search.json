@@ -10,5 +10,6 @@
   "issuer": "Google",
   "area": "ads",
   "badge": "../../assets/certifications/google-ads-search.png",
+  "needsRenewal": true,
   "order": 10
 }

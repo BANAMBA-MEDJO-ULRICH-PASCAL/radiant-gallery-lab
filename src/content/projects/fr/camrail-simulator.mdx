@@ -1,0 +1,98 @@
+---
+title: "Simulateur de plans de transport CAMRAIL"
+pillar: "web-apps"
+alsoPillars: ["web-development"]
+summary: "Un simulateur de plan de transport ferroviaire pour le réseau à voie unique camerounais : il détecte automatiquement tous les conflits de circulation, calcule un plan sans conflit par coloration de graphe, puis recalcule l'horaire complet lorsqu'un incident survient."
+status: "shipped"
+role: "Seul — modélisation, algorithmes, API et interface"
+period: "2026"
+date: 2026-08-15
+teamSize: 1
+stack:
+  - "Python"
+  - "FastAPI"
+  - "Coloration de graphe (Welsh–Powell, DSATUR)"
+  - "Leaflet"
+  - "JavaScript"
+results:
+  - "Modélise le corridor réel TRANSCAM I + II — Douala ⇄ Yaoundé ⇄ Ngaoundéré"
+  - "Détecte automatiquement huit types de conflits, du croisement frontal aux retards en cascade"
+  - "Produit un horaire sans conflit en ramenant la planification à une coloration de graphe"
+  - "Recalcule le plan entier en direct lors d'un incident, jusqu'à ×60 en vitesse simulée"
+cover: "../../../assets/projects/camrail-simulator/simulator-interface.png"
+coverAlt: "L'interface du simulateur : une carte du réseau ferroviaire camerounais avec douze circulations et un panneau de simulation d'incident"
+gallery:
+  - src: "../../../assets/projects/camrail-simulator/conflict-graph.png"
+    alt: "Graphe de conflits où chaque nœud est une circulation et chaque arête une incompatibilité"
+    caption: "Le graphe de conflits. Chaque arête relie deux circulations qui ne peuvent partager une ressource."
+  - src: "../../../assets/projects/camrail-simulator/train-diagram.png"
+    alt: "Graphique de marche des trains représentant la distance en fonction du temps"
+    caption: "La marche des trains — la vue distance/temps que lit un régulateur."
+  - src: "../../../assets/projects/camrail-simulator/dsatur-colouring.png"
+    alt: "Graphe coloré par l'algorithme DSATUR, chaque couleur étant un créneau sans conflit"
+    caption: "Coloration DSATUR. Chaque couleur est un créneau où ces circulations peuvent coexister."
+  - src: "../../../assets/projects/camrail-simulator/incident-simulation.png"
+    alt: "L'horaire après injection d'un retard de 45 minutes et recalcul des circulations"
+    caption: "Après un retard de 45 minutes, le plan est recalculé et non simplement décalé."
+featured: true
+order: 20
+---
+
+## Le problème
+
+L'essentiel du réseau CAMRAIL est à **voie unique**. Ce seul fait rend la
+planification ferroviaire réellement difficile : deux trains circulant en sens
+inverse sur la même section ne se gênent pas simplement, ils ne peuvent pas y
+coexister. Chaque croisement doit être planifié à l'avance dans un évitement.
+
+Planifiez une douzaine de circulations sur ce corridor à la main et les
+combinaisons vous échappent très vite. Et dès qu'un train accuse 45 minutes de
+retard, le plan construit en plusieurs heures devient faux — pas légèrement faux,
+mais faux en cascade, chaque train décalé percutant le créneau réservé du suivant.
+
+## L'approche
+
+**Modéliser le réseau correctement d'abord.** Gares, sections, évitements,
+capacité des quais et rotations du matériel sont tous représentés explicitement :
+un conflit que l'on n'a pas modélisé est un conflit que l'on ne peut pas détecter.
+
+**Puis classer les conflits.** Le simulateur en détecte huit types distincts,
+chacun avec sa règle de détection et sa page explicative dans l'interface :
+croisement frontal, dépassement, rattrapage, évitement, occupation de quai en
+gare, rotation du matériel, indisponibilité de ressource, et effets de cascade
+où un retard se propage sur la journée.
+
+**Ramener la planification à une coloration de graphe.** C'est le cœur du projet.
+On construit un graphe où chaque nœud est une circulation et chaque arête relie
+deux circulations incompatibles. Un horaire valide sans conflit est alors
+exactement une **coloration propre** de ce graphe — les nœuds adjacents doivent
+différer, et chaque couleur devient un créneau sûr.
+
+J'ai implémenté deux heuristiques classiques afin de comparer leur comportement
+sur le même réseau : **Welsh–Powell**, qui colore gloutonnement par degré
+décroissant, et **DSATUR**, qui choisit le sommet le plus saturé et utilise
+généralement moins de couleurs — donc un horaire plus serré.
+
+**Puis le casser volontairement.** Le simulateur injecte un retard sur le train et
+la gare de votre choix, et recalcule le plan entier : on observe la propagation
+des effets au lieu de la théoriser.
+
+## L'interface
+
+Le backend sert directement le site : une carte Leaflet du corridor réel, douze
+circulations codées par couleur selon le type de service (Express, Semi-direct,
+Fret, Nuit), une lecture de ×4 à ×60, et un panneau pour déclarer un incident et
+observer la réaction du réseau.
+
+S'y ajoutent des pages dédiées expliquant la raison d'être du projet et la
+méthodologie employée — car un simulateur qu'un régulateur ne sait pas
+interpréter ne sert pas à grand-chose, aussi correct soit l'algorithme en dessous.
+
+## Ce que j'en retire
+
+La vraie leçon, c'est que la difficulté n'est pas l'algorithme. La coloration de
+graphe relève du manuel. La difficulté est de **modéliser le domaine assez
+fidèlement pour que l'algorithme résolve le bon problème** — faire entrer
+correctement les évitements, l'occupation des quais et les rotations de matériel
+dans le graphe. Un graphe magnifiquement coloré sur les mauvaises contraintes
+donne une réponse fausse très convaincante.

@@ -1,0 +1,89 @@
+---
+title: "Jackbeat — Archiver la musique camerounaise"
+pillar: "web-apps"
+alsoPillars: ["web-development"]
+summary: "Une archive participative de la musique camerounaise depuis l'indépendance : le public soumet artistes et œuvres, des modérateurs les valident, et l'ensemble s'explore par carte, chronologie et graphiques — Makossa, Bikutsi, Assiko et Ambasse Bey en catégories à part entière."
+status: "ongoing"
+planned:
+  - "Enrichir le catalogue par la contribution publique et la modération continues"
+role: "Seul — modèle de données, application, modération et tableau de bord"
+period: "2026 — en cours"
+date: 2026-08-28
+teamSize: 1
+stack:
+  - "Python"
+  - "Flask"
+  - "PostgreSQL"
+  - "SQLAlchemy"
+  - "pandas"
+  - "Plotly"
+  - "ReportLab"
+  - "Render"
+results:
+  - "Modélise la musique camerounaise selon ses propres termes — 14 genres, 11 régions et 11 langues dont l'ewondo, le bassa, le duala, le fulfulde et le pidgin"
+  - "Chaîne de contribution modérée : toute soumission publique est examinée avant d'entrer dans l'archive"
+  - "Couche d'analyse avec carte régionale, chronologie depuis l'indépendance, graphiques et export de rapport PDF"
+  - "Déployé en infrastructure-as-code, les secrets étant générés par la plateforme plutôt qu'inscrits dans le dépôt"
+featured: false
+order: 40
+---
+
+## Le problème
+
+La musique camerounaise possède une histoire extraordinaire — Makossa, Bikutsi,
+Bend-Skin, Assiko, Mangambeu, Ambasse Bey — et très peu de tout cela est
+répertorié de manière structurée. Ce qui existe est éparpillé entre des vidéos
+YouTube, des articles de blog et la mémoire des gens. Il n'existe aucun jeu de
+données que l'on puisse interroger : quelles régions ont produit quels genres,
+comment un style s'est diffusé au fil des décennies, dans quelles langues les
+artistes ont réellement enregistré.
+
+On ne peut pas analyser ce que personne n'a collecté. Jackbeat est donc deux
+choses à la fois : un instrument de collecte, et l'analyse construite sur ce
+qu'il collecte.
+
+## L'approche
+
+**Modéliser le domaine honnêtement.** La décision de conception la plus difficile
+a été de refuser les catégories génériques. Le genre n'est pas un champ libre :
+c'est une liste explicite de quatorze entrées, menée par les styles qui comptent
+réellement ici plutôt que par un standard international. La région couvre les dix
+régions camerounaises plus la diaspora. La langue inclut l'ewondo, le bassa, le
+duala, le fulfulde, le bamiléké, le pidgin english et l'arabe choa — car un champ
+n'offrant que le français et l'anglais effacerait silencieusement l'essentiel du
+catalogue.
+
+**Ouvrir la contribution, mais la modérer.** N'importe qui peut soumettre un
+artiste ou une œuvre via un formulaire guidé. Rien n'apparaît publiquement à la
+soumission : chaque entrée arrive `en attente` et un modérateur l'approuve ou la
+rejette. Une voie de signalement permet aussi aux lecteurs de remonter les
+erreurs des fiches déjà publiées.
+
+Une contribution ouverte sans modération produit une archive qui grossit vite et
+que personne ne peut citer. C'est l'étape de relecture qui rend les données
+analysables.
+
+**Rendre l'archive agréable à parcourir.** Pages publiques pour les artistes et
+les œuvres, recherche avec suggestions en direct, mentions j'aime, commentaires,
+classements, et liens YouTube analysés quel que soit le format d'URL collé.
+
+**Puis analyser.** Un tableau de bord construit avec pandas et Plotly : une carte
+régionale de l'origine des artistes, une chronologie retraçant la production
+depuis l'indépendance, des statistiques agrégées par genre et par langue, et un
+rapport PDF exportable — car les personnes les plus susceptibles de vouloir ces
+données sont des chercheurs et des journalistes, qui ont besoin de pouvoir citer.
+
+## Mise en production
+
+Déployé sur Render en infrastructure-as-code : un service Flask derrière
+gunicorn, une base PostgreSQL managée et un health check. Le mot de passe
+administrateur et le secret de session sont **générés par la plateforme** plutôt
+que versionnés — une petite discipline qui compte, car un dépôt garde tout et un
+secret fuité dans son historique est très difficile à reprendre.
+
+## Ce qu'il reste à faire
+
+L'architecture est en place ; ce qui lui manque, c'est la **profondeur du
+catalogue**. Une archive musicale ne vaut que par le nombre de ses entrées, et
+cela vient d'une contribution et d'une modération soutenues plutôt que de
+nouveau code.

@@ -58,7 +58,9 @@ const grouped = certifications.reduce<Record<string, typeof certifications>>((ac
             </h2>
             <div class="mt-5 grid gap-4 sm:grid-cols-2">
               {entries.map(({ data }) => {
-                const expired = data.expires ? data.expires.getTime() < Date.now() : false;
+                const expired =
+                  data.needsRenewal ||
+                  (data.expires ? data.expires.getTime() < Date.now() : false);
                 return (
                   <div class="reveal flex gap-5 rounded-[24px] bg-cream/80 p-6 ring-1 ring-brown/10">
                     {data.badge && (
