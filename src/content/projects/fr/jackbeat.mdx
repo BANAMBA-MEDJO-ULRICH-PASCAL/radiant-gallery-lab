@@ -24,6 +24,18 @@ results:
   - "Chaîne de contribution modérée : toute soumission publique est examinée avant d'entrer dans l'archive"
   - "Couche d'analyse avec carte régionale, chronologie depuis l'indépendance, graphiques et export de rapport PDF"
   - "Déployé en infrastructure-as-code, les secrets étant générés par la plateforme plutôt qu'inscrits dans le dépôt"
+cover: "../../../assets/projects/jackbeat/dashboard.png"
+coverAlt: "Le tableau de bord d'analyse Jackbeat montrant la composition du répertoire par genre et par langue"
+gallery:
+  - src: "../../../assets/projects/jackbeat/map.png"
+    alt: "Carte du Cameroun colorée selon le nombre d'artistes archivés par région"
+    caption: "Carte régionale — chaque région teintée selon le nombre d'artistes archivés."
+  - src: "../../../assets/projects/jackbeat/timeline.png"
+    alt: "Chronologie musicale des productions par année et par genre au fil des décennies"
+    caption: "La chronologie, décennie par décennie, avec export d'un rapport PDF complet."
+  - src: "../../../assets/projects/jackbeat/artists.png"
+    alt: "Annuaire public des artistes avec filtres par région et tri"
+    caption: "L'annuaire public, filtrable par région et triable par popularité."
 featured: false
 order: 40
 ---
@@ -75,11 +87,16 @@ données sont des chercheurs et des journalistes, qui ont besoin de pouvoir cite
 
 ## Mise en production
 
-Déployé sur Render en infrastructure-as-code : un service Flask derrière
+Configuré pour Render en infrastructure-as-code : un service Flask derrière
 gunicorn, une base PostgreSQL managée et un health check. Le mot de passe
 administrateur et le secret de session sont **générés par la plateforme** plutôt
 que versionnés — une petite discipline qui compte, car un dépôt garde tout et un
 secret fuité dans son historique est très difficile à reprendre.
+
+L'application n'est pas hébergée publiquement actuellement : l'offre gratuite de
+Render n'autorise qu'une base de données pendant 30 jours, et cette fenêtre est
+expirée. L'application elle-même est complète et fonctionne en local sur SQLite
+sans configuration — les captures ci-dessus en proviennent directement.
 
 ## Ce qu'il reste à faire
 
