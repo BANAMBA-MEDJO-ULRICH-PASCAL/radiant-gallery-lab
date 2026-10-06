@@ -20,7 +20,7 @@ type AboutCopy = {
 
 export const aboutCopy: Record<Locale, AboutCopy> = {
   en: {
-    lead: "Self-taught, based in Yaoundé, and equally at home in a codebase and an ad account.",
+    lead: "Two years in, self-taught, based in Yaoundé, and equally at home in a codebase and an ad account.",
     paragraphs: [
       "I started with documentation and a stubborn habit of rebuilding things until they worked. No bootcamp, no computer science degree — just W3Schools, the MDN docs, and a lot of evenings. The first real thing I shipped was MyTech, a twelve-page corporate site I built end to end to prove to myself I could.",
       "What I found along the way is that building the thing is only half the job. A beautiful site nobody visits is a hobby, not a business. So I went and learned the other half — Google Ads, Meta Ads, and the technical SEO that decides whether a page is even eligible to rank. I hold certifications across Google Search, Display, Measurement, Analytics and Tag Manager.",
@@ -30,7 +30,7 @@ export const aboutCopy: Record<Locale, AboutCopy> = {
     facts: [
       { label: "Based in", value: "Yaoundé, Cameroon" },
       { label: "Working in", value: "English & French" },
-      { label: "Started", value: "Self-taught, 2024" },
+      { label: "Experience", value: "2+ years, self-taught" },
     ],
     skillsTitle: "What I work with",
     skillGroups: [
@@ -59,7 +59,7 @@ export const aboutCopy: Record<Locale, AboutCopy> = {
   },
 
   fr: {
-    lead: "Autodidacte, basé à Yaoundé, aussi à l'aise dans un dépôt de code que dans un compte publicitaire.",
+    lead: "Deux ans d'expérience, autodidacte, basé à Yaoundé, aussi à l'aise dans un dépôt de code que dans un compte publicitaire.",
     paragraphs: [
       "J'ai commencé avec la documentation et l'habitude têtue de reconstruire les choses jusqu'à ce qu'elles fonctionnent. Pas de bootcamp, pas de diplôme en informatique — juste W3Schools, la documentation MDN, et beaucoup de soirées. Le premier vrai projet que j'ai livré est MyTech, un site d'entreprise de douze pages construit de bout en bout pour me prouver que j'en étais capable.",
       "Ce que j'ai découvert en chemin, c'est que construire n'est que la moitié du travail. Un beau site que personne ne visite est un loisir, pas une activité. Je suis donc allé apprendre l'autre moitié — Google Ads, Meta Ads, et le SEO technique qui détermine si une page peut seulement prétendre se positionner. Je suis certifié en Google Search, Display, Measurement, Analytics et Tag Manager.",
@@ -69,7 +69,7 @@ export const aboutCopy: Record<Locale, AboutCopy> = {
     facts: [
       { label: "Basé à", value: "Yaoundé, Cameroun" },
       { label: "Langues de travail", value: "Anglais & français" },
-      { label: "Depuis", value: "Autodidacte, 2024" },
+      { label: "Expérience", value: "2+ ans, autodidacte" },
     ],
     skillsTitle: "Ce que j'utilise",
     skillGroups: [

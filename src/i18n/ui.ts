@@ -28,9 +28,9 @@ export const ui = {
 
     // --- Home ----------------------------------------------------------------
     "home.role": "Developer × digital marketer × security builder",
-    "home.tagline": "I build the thing, then bring people to it.",
+    "home.tagline": "I build calm software & the stories that bring people to it.",
     "home.intro":
-      "I'm Pascal — I write the code, harden it, and run the campaigns that put it in front of the right people. Websites, web apps, security programs and AI tools on one side; Google and Meta Ads and technical SEO on the other.",
+      "I'm Pascal — a developer who writes code with patience and a marketer who writes like a friend. For over two years I've built websites, web apps, security programs and AI tools, and run the Google and Meta Ads and technical SEO that bring people to them.",
     "home.cta.primary": "Start a conversation",
     "home.cta.secondary": "See the work",
 
@@ -146,9 +146,9 @@ export const ui = {
 
     // --- Home ----------------------------------------------------------------
     "home.role": "Développeur × marketeur digital × ingénieur sécurité",
-    "home.tagline": "Je construis, puis j'amène les gens jusqu'à vous.",
+    "home.tagline": "Je crée des logiciels sobres & les histoires qui y amènent les gens.",
     "home.intro":
-      "Je suis Pascal — j'écris le code, je le sécurise, et je mène les campagnes qui le placent devant les bonnes personnes. Sites web, applications, programmes de sécurité et outils IA d'un côté ; Google Ads, Meta Ads et SEO technique de l'autre.",
+      "Je suis Pascal — un développeur qui code avec patience et un marketeur qui écrit comme un ami. Depuis plus de deux ans, je construis des sites, des applications web, des programmes de sécurité et des outils IA, et je mène les campagnes Google Ads, Meta Ads et le SEO technique qui y amènent les gens.",
     "home.cta.primary": "Démarrons la conversation",
     "home.cta.secondary": "Voir les réalisations",
 
