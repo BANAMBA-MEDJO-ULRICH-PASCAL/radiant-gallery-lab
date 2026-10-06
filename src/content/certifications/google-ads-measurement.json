@@ -1,0 +1,14 @@
+{
+  "name": {
+    "en": "Google Ads Measurement Certification",
+    "fr": "Certification Google Ads Measurement"
+  },
+  "description": {
+    "en": "Conversion tracking, attribution models and measuring campaign performance against business goals.",
+    "fr": "Suivi des conversions, modèles d'attribution et mesure des performances au regard des objectifs commerciaux."
+  },
+  "issuer": "Google",
+  "area": "analytics",
+  "badge": "../../assets/certifications/google-ads-measurement.png",
+  "order": 20
+}

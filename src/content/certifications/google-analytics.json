@@ -1,0 +1,14 @@
+{
+  "name": {
+    "en": "Google Analytics Certification",
+    "fr": "Certification Google Analytics"
+  },
+  "description": {
+    "en": "GA4 property setup, data streams, reporting and turning traffic data into decisions.",
+    "fr": "Configuration des propriétés GA4, flux de données, rapports et transformation des données de trafic en décisions."
+  },
+  "issuer": "Google",
+  "area": "analytics",
+  "badge": "../../assets/certifications/google-analytics.png",
+  "order": 30
+}

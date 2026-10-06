@@ -93,14 +93,21 @@ const posts = defineCollection({
  */
 const certifications = defineCollection({
   loader: glob({ pattern: "**/[^_]*.{json,yaml,yml}", base: "./src/content/certifications" }),
-  schema: () =>
+  schema: ({ image }) =>
     z.object({
       name: z.object({ en: z.string(), fr: z.string() }),
       description: z.object({ en: z.string(), fr: z.string() }).optional(),
       issuer: z.string(),
       /** Skill area, used to group the page into sections. */
       area: z.enum(["ads", "analytics", "seo", "security", "development", "other"]),
+      /** Official badge artwork, shown on the card when present. */
+      badge: image().optional(),
       issued: z.coerce.date().optional(),
+      /**
+       * Google Ads certifications lapse one year after completion. When this is
+       * set and in the past, the card is labelled as expired rather than
+       * quietly presenting a lapsed credential as current.
+       */
       expires: z.coerce.date().optional(),
       credentialUrl: z.string().url().optional(),
       order: z.number().default(100),

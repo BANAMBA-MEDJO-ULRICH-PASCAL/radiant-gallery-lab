@@ -1,0 +1,14 @@
+{
+  "name": {
+    "en": "Google Ads Search Certification",
+    "fr": "Certification Google Ads Search"
+  },
+  "description": {
+    "en": "Campaign structure, keyword strategy, bidding and optimisation for Google Search.",
+    "fr": "Structure de campagne, stratégie de mots clés, enchères et optimisation sur le Réseau de Recherche."
+  },
+  "issuer": "Google",
+  "area": "ads",
+  "badge": "../../assets/certifications/google-ads-search.png",
+  "order": 10
+}
