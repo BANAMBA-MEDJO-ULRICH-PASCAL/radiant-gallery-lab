@@ -6,14 +6,20 @@
  * lives in the content collections under `src/content/`.
  */
 
-/** Canonical origin. Update once a custom domain is pointed at the site. */
-export const SITE_URL = "https://ulrich-pascal.onrender.com";
+/**
+ * Canonical origin — must match the deployed host exactly, since canonical
+ * URLs, hreflang pairs, the sitemap and robots.txt are all built from it.
+ *
+ * Currently the Render service name in `render.yaml`. Update here (and only
+ * here) once a custom domain is pointed at the site.
+ */
+export const SITE_URL = "https://ulrich-pascal-portfolio.onrender.com";
 
 export const profile = {
   name: "Ulrich Pascal",
   /** Full legal name, used for structured data and the CV. */
   legalName: "Banamba Medjo Ulrich Pascal",
-  email: "glnet785@gmail.com",
+  email: "banambamedjoulrichpascal@gmail.com",
   phone: "+237683499422",
   phoneDisplay: "+237 683 499 422",
   location: {

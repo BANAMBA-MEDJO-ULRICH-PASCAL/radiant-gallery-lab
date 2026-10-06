@@ -1,4 +1,0 @@
-﻿User-agent: *
-Allow: /
-
-Sitemap: https://ulrich-pascal.onrender.com/sitemap-index.xml
