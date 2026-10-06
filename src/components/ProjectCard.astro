@@ -1,0 +1,98 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+
+import { PILLARS, type Locale } from "@/config/site";
+import { useTranslations, localePath } from "@/i18n/utils";
+import { entrySlug } from "@/lib/content";
+import type { UIKey } from "@/i18n/ui";
+
+interface Props {
+  entry: CollectionEntry<"projects">;
+  lang: Locale;
+}
+
+const { entry, lang } = Astro.props;
+const t = useTranslations(lang);
+const { data } = entry;
+
+const pillar = PILLARS.find((p) => p.id === data.pillar);
+const pillarName = t(`pillar.${data.pillar}.name` as UIKey);
+const statusLabel = t(`work.status.${data.status}` as UIKey);
+
+const href = localePath(lang, `work/${entrySlug(entry.id)}`);
+
+// Each pillar owns an accent so a card's discipline is readable at a glance.
+const accentRing: Record<string, string> = {
+  terracotta: "bg-terracotta/15 text-terracotta",
+  amber: "bg-amber/25 text-brown",
+  sage: "bg-sage/20 text-moss",
+  moss: "bg-moss/15 text-moss",
+  bark: "bg-bark/15 text-bark",
+};
+---
+
+<article
+  class="reveal group flex flex-col rounded-[28px] bg-cream/80 p-6 ring-1 ring-brown/10 backdrop-blur-sm transition-transform hover:-translate-y-1"
+>
+  {
+    data.cover && (
+      <a href={href} class="block" tabindex="-1" aria-hidden="true">
+        <Image
+          src={data.cover}
+          alt={data.coverAlt ?? ""}
+          widths={[400, 800, 1024]}
+          sizes="(min-width: 640px) 480px, 100vw"
+          loading="lazy"
+          class="mb-5 aspect-[4/3] w-full rounded-[20px] object-cover ring-1 ring-brown/5"
+        />
+      </a>
+    )
+  }
+
+  <div class="flex flex-wrap items-center gap-2">
+    <h3 class="font-display text-xl text-brown">
+      <a href={href} class="after:absolute after:inset-0 focus:outline-none">
+        {data.title}
+      </a>
+    </h3>
+    <span
+      class:list={[
+        "rounded-full px-3 py-1 text-xs font-medium",
+        accentRing[pillar?.accent ?? "sage"],
+      ]}
+    >
+      {pillarName}
+    </span>
+    {
+      data.status !== "shipped" && (
+        <span class="rounded-full bg-paper px-3 py-1 text-xs font-medium text-bark ring-1 ring-brown/10">
+          {statusLabel}
+        </span>
+      )
+    }
+  </div>
+
+  <p class="mt-2 text-sm text-bark">{data.summary}</p>
+
+  <div class="mt-4 flex flex-wrap items-center gap-2 pt-1">
+    {
+      data.stack.slice(0, 3).map((tag) => (
+        <span class="rounded-full bg-amber/20 px-3 py-1 text-xs font-medium text-brown">
+          {tag}
+        </span>
+      ))
+    }
+    <span class="ml-auto text-sm font-semibold text-terracotta">
+      {t("work.viewCase")}
+    </span>
+  </div>
+</article>
+
+<style>
+  /* The heading link is stretched over the whole card, so the card itself is
+     the click target while the accessible name stays the project title. */
+  article {
+    position: relative;
+  }
+</style>

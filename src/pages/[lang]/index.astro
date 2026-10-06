@@ -1,0 +1,193 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ProjectCard from "@/components/ProjectCard.astro";
+
+import { PILLARS, profile, type Locale } from "@/config/site";
+import { useTranslations, localePath, localeStaticPaths } from "@/i18n/utils";
+import { getFeaturedProjects } from "@/lib/content";
+import type { UIKey } from "@/i18n/ui";
+
+export const getStaticPaths = localeStaticPaths;
+
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+
+const featured = await getFeaturedProjects(lang, 2);
+
+/** The two homepage cards, each listing the pillars that belong to that craft. */
+const crafts = (["build", "market"] as const).map((craft) => ({
+  craft,
+  title: t(`craft.${craft}.title` as UIKey),
+  tagline: t(`craft.${craft}.tagline` as UIKey),
+  dot: craft === "build" ? "bg-terracotta" : "bg-amber",
+  pillars: PILLARS.filter((p) => p.craft === craft).map((p) => ({
+    name: t(`pillar.${p.id}.name` as UIKey),
+    short: t(`pillar.${p.id}.short` as UIKey),
+  })),
+}));
+
+const title = `${profile.name} — ${t("home.role")}`;
+const description = t("home.intro");
+---
+
+<BaseLayout {lang} {title} {description}>
+  <div class="mx-auto max-w-5xl px-6">
+    {/* Hero */}
+    <section class="fade-up pt-14 pb-16">
+      <p
+        class="mb-5 inline-block rounded-full bg-sage/20 px-4 py-1.5 text-sm font-medium text-moss"
+      >
+        {t("home.role")}
+      </p>
+      <h1
+        class="max-w-3xl font-display text-5xl leading-tight tracking-tight text-brown sm:text-6xl"
+      >
+        {t("home.tagline")}
+      </h1>
+      <p class="mt-6 max-w-xl text-base text-bark sm:text-lg">
+        {t("home.intro")}
+      </p>
+      <div class="mt-8 flex flex-wrap items-center gap-4">
+        <a
+          href={localePath(lang, "contact")}
+          class="rounded-full bg-terracotta px-6 py-3 text-base font-semibold text-cream ring-1 ring-terracotta transition-transform hover:-translate-y-0.5"
+        >
+          {t("home.cta.primary")}
+        </a>
+        <a
+          href={localePath(lang, "work")}
+          class="rounded-full px-6 py-3 text-base font-semibold text-brown ring-1 ring-brown/20 transition-transform hover:-translate-y-0.5"
+        >
+          {t("home.cta.secondary")}
+        </a>
+      </div>
+    </section>
+
+    {/* The two crafts, with all six pillars nested inside */}
+    <section class="py-16">
+      <div class="reveal mb-8">
+        <p class="font-display text-lg italic text-terracotta">
+          {t("home.services.eyebrow")}
+        </p>
+        <h2 class="font-display text-3xl leading-tight text-brown">
+          {t("home.services.title")}
+        </h2>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-2">
+        {
+          crafts.map((craft) => (
+            <div class="reveal rounded-[28px] bg-cream/80 p-8 ring-1 ring-brown/10 backdrop-blur-sm">
+              <h3 class="font-display text-2xl text-brown">{craft.title}</h3>
+              <p class="mt-2 text-sm text-bark">{craft.tagline}</p>
+              <ul class="mt-5 space-y-3 text-sm text-bark">
+                {craft.pillars.map((pillar) => (
+                  <li class="flex items-start gap-3">
+                    <span
+                      class:list={["mt-1.5 size-1.5 shrink-0 rounded-full", craft.dot]}
+                    />
+                    <span>
+                      <span class="font-medium text-brown">{pillar.name}</span>
+                      <span class="block text-xs text-bark/80">{pillar.short}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <a
+                href={localePath(lang, "services")}
+                class="mt-6 inline-block text-sm font-semibold text-terracotta hover:underline"
+              >
+                {t("home.services.seeAll")}
+              </a>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    {/* Selected work */}
+    <section class="py-16">
+      <div class="reveal mb-8 flex items-end justify-between">
+        <div>
+          <p class="font-display text-lg italic text-terracotta">
+            {t("home.work.eyebrow")}
+          </p>
+          <h2 class="font-display text-3xl leading-tight text-brown">
+            {t("home.work.title")}
+          </h2>
+        </div>
+        <a
+          href={localePath(lang, "work")}
+          class="hidden text-sm font-semibold text-terracotta hover:underline sm:inline-block"
+        >
+          {t("home.work.all")}
+        </a>
+      </div>
+
+      {
+        featured.length > 0 ? (
+          <div class="grid gap-6 sm:grid-cols-2">
+            {featured.map((entry) => (
+              <ProjectCard {entry} {lang} />
+            ))}
+          </div>
+        ) : (
+          <p class="reveal rounded-[28px] bg-cream/60 p-8 text-sm text-bark ring-1 ring-brown/10">
+            {t("home.work.empty")}
+          </p>
+        )
+      }
+
+      <div class="mt-6 sm:hidden">
+        <a
+          href={localePath(lang, "work")}
+          class="text-sm font-semibold text-terracotta hover:underline"
+        >
+          {t("home.work.all")}
+        </a>
+      </div>
+    </section>
+
+    {/* About teaser */}
+    <section class="py-16">
+      <div
+        class="reveal grid gap-10 rounded-[32px] bg-cream/70 p-8 ring-1 ring-brown/10 backdrop-blur-sm sm:p-10"
+      >
+        <div class="flex flex-col justify-center">
+          <p class="font-display text-lg italic text-terracotta">
+            {t("home.about.eyebrow")}
+          </p>
+          <h2 class="mt-3 font-display text-3xl leading-tight text-brown">
+            {t("home.about.title")}
+          </h2>
+          <p class="mt-4 max-w-2xl text-base text-bark">{t("home.about.body")}</p>
+          <a
+            href={localePath(lang, "about")}
+            class="mt-5 inline-block text-sm font-semibold text-terracotta hover:underline"
+          >
+            {t("home.about.link")}
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {/* Closing call to action */}
+    <section class="py-16">
+      <div
+        class="reveal rounded-[32px] bg-cream/80 p-8 text-center ring-1 ring-brown/10 backdrop-blur-sm sm:p-12"
+      >
+        <h2 class="font-display text-3xl leading-tight text-brown">
+          {t("home.finalCta.title")}
+        </h2>
+        <p class="mx-auto mt-3 max-w-md text-base text-bark">
+          {t("home.finalCta.body")}
+        </p>
+        <a
+          href={localePath(lang, "contact")}
+          class="mt-6 inline-block rounded-full bg-terracotta px-6 py-3 text-base font-semibold text-cream transition-transform hover:-translate-y-0.5"
+        >
+          {t("home.cta.primary")}
+        </a>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

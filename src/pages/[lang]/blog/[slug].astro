@@ -1,0 +1,94 @@
+---
+import { Image } from "astro:assets";
+import { getCollection, render, type CollectionEntry } from "astro:content";
+
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { SITE_URL, profile, type Locale } from "@/config/site";
+import { useTranslations, localePath, formatDate } from "@/i18n/utils";
+import { toLocalisedPaths, entrySlug } from "@/lib/content";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("posts", ({ data }) =>
+    import.meta.env.DEV ? true : data.draft !== true,
+  );
+  return toLocalisedPaths(entries);
+}
+
+type Props = { entry: CollectionEntry<"posts"> };
+
+const { entry } = Astro.props;
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+const { data } = entry;
+const { Content } = await render(entry);
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: data.title,
+  description: data.description,
+  datePublished: data.date.toISOString(),
+  ...(data.updated ? { dateModified: data.updated.toISOString() } : {}),
+  author: { "@type": "Person", name: profile.legalName, url: SITE_URL },
+  inLanguage: lang,
+  mainEntityOfPage: new URL(localePath(lang, `blog/${entrySlug(entry.id)}`), SITE_URL).href,
+};
+---
+
+<BaseLayout
+  {lang}
+  title={data.title}
+  description={data.description}
+  type="article"
+  {structuredData}
+>
+  <article class="mx-auto max-w-2xl px-6 pb-16">
+    <div class="pt-10">
+      <a
+        href={localePath(lang, "blog")}
+        class="text-sm font-semibold text-terracotta hover:underline"
+      >
+        {t("blog.backToBlog")}
+      </a>
+    </div>
+
+    <header class="fade-up pt-6 pb-8">
+      <p class="text-xs text-bark/70">
+        {formatDate(data.date, lang)}
+      </p>
+      <h1 class="mt-2 font-display text-4xl leading-tight tracking-tight text-brown">
+        {data.title}
+      </h1>
+      <p class="mt-4 text-lg text-bark">{data.description}</p>
+    </header>
+
+    {
+      data.cover && (
+        <Image
+          src={data.cover}
+          alt={data.coverAlt ?? data.title}
+          widths={[600, 900, 1200]}
+          sizes="(min-width: 768px) 672px, 100vw"
+          loading="eager"
+          class="mb-10 w-full rounded-[28px] object-cover ring-1 ring-brown/10"
+        />
+      )
+    }
+
+    <div class="prose-portfolio">
+      <Content />
+    </div>
+
+    {
+      data.tags.length > 0 && (
+        <div class="mt-10 flex flex-wrap gap-2 border-t border-brown/10 pt-6">
+          {data.tags.map((tag) => (
+            <span class="rounded-full bg-amber/20 px-3 py-1 text-xs font-medium text-brown">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )
+    }
+  </article>
+</BaseLayout>

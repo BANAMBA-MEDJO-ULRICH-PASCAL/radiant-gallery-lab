@@ -1,0 +1,236 @@
+---
+import { Image } from "astro:assets";
+import { getCollection, render, type CollectionEntry } from "astro:content";
+
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { PILLARS, SITE_URL, profile, type Locale } from "@/config/site";
+import { useTranslations, localePath, formatDate } from "@/i18n/utils";
+import { toLocalisedPaths, entrySlug } from "@/lib/content";
+import type { UIKey } from "@/i18n/ui";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("projects", ({ data }) =>
+    import.meta.env.DEV ? true : data.draft !== true,
+  );
+  return toLocalisedPaths(entries);
+}
+
+type Props = { entry: CollectionEntry<"projects"> };
+
+const { entry } = Astro.props;
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+const { data } = entry;
+const { Content } = await render(entry);
+
+const pillar = PILLARS.find((p) => p.id === data.pillar);
+const pillarName = t(`pillar.${data.pillar}.name` as UIKey);
+const statusLabel = t(`work.status.${data.status}` as UIKey);
+
+const accent: Record<string, string> = {
+  terracotta: "bg-terracotta/15 text-terracotta",
+  amber: "bg-amber/25 text-brown",
+  sage: "bg-sage/20 text-moss",
+  moss: "bg-moss/15 text-moss",
+  bark: "bg-bark/15 text-bark",
+};
+
+const facts = [
+  data.role && { label: t("work.role"), value: data.role },
+  data.period && { label: t("work.period"), value: data.period },
+  data.client && { label: "Client", value: data.client },
+].filter(Boolean) as { label: string; value: string }[];
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  name: data.title,
+  description: data.summary,
+  author: { "@type": "Person", name: profile.legalName },
+  dateCreated: data.date.toISOString(),
+  inLanguage: lang,
+  url: new URL(localePath(lang, `work/${entrySlug(entry.id)}`), SITE_URL).href,
+  ...(data.links.live ? { sameAs: [data.links.live] } : {}),
+};
+---
+
+<BaseLayout
+  {lang}
+  title={data.title}
+  description={data.summary}
+  type="article"
+  {structuredData}
+>
+  <article class="mx-auto max-w-3xl px-6 pb-16">
+    <div class="pt-10">
+      <a
+        href={localePath(lang, "work")}
+        class="text-sm font-semibold text-terracotta hover:underline"
+      >
+        {t("work.backToWork")}
+      </a>
+    </div>
+
+    <header class="fade-up pt-6 pb-10">
+      <div class="flex flex-wrap items-center gap-2">
+        <span
+          class:list={[
+            "rounded-full px-3 py-1 text-xs font-medium",
+            accent[pillar?.accent ?? "sage"],
+          ]}
+        >
+          {pillarName}
+        </span>
+        {
+          data.status !== "shipped" && (
+            <span class="rounded-full bg-paper px-3 py-1 text-xs font-medium text-bark ring-1 ring-brown/10">
+              {statusLabel}
+            </span>
+          )
+        }
+      </div>
+
+      <h1 class="mt-4 font-display text-4xl leading-tight tracking-tight text-brown sm:text-5xl">
+        {data.title}
+      </h1>
+      <p class="mt-4 text-lg text-bark">{data.summary}</p>
+
+      {
+        facts.length > 0 && (
+          <dl class="mt-8 grid gap-4 border-t border-brown/10 pt-6 sm:grid-cols-3">
+            {facts.map((fact) => (
+              <div>
+                <dt class="text-xs tracking-wide text-bark/70 uppercase">{fact.label}</dt>
+                <dd class="mt-1 text-sm font-medium text-brown">{fact.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )
+      }
+    </header>
+
+    {
+      data.cover && (
+        <Image
+          src={data.cover}
+          alt={data.coverAlt ?? data.title}
+          widths={[600, 900, 1400]}
+          sizes="(min-width: 768px) 768px, 100vw"
+          loading="eager"
+          class="mb-12 w-full rounded-[28px] object-cover ring-1 ring-brown/10"
+        />
+      )
+    }
+
+    {
+      data.results.length > 0 && (
+        <section class="reveal mb-12 rounded-[28px] bg-cream/80 p-8 ring-1 ring-brown/10">
+          <h2 class="font-display text-2xl text-brown">{t("work.results")}</h2>
+          <ul class="mt-4 space-y-3 text-sm text-bark">
+            {data.results.map((result) => (
+              <li class="flex items-start gap-3">
+                <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-terracotta" />
+                <span>{result}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {/* The MDX body of the case study: problem, approach, detail. */}
+    <div class="prose-portfolio reveal">
+      <Content />
+    </div>
+
+    {
+      data.gallery.length > 0 && (
+        <section class="reveal mt-12 grid gap-6 sm:grid-cols-2">
+          {data.gallery.map((shot) => (
+            <figure>
+              <Image
+                src={shot.src}
+                alt={shot.alt}
+                widths={[400, 800]}
+                sizes="(min-width: 640px) 380px, 100vw"
+                loading="lazy"
+                class="w-full rounded-[20px] object-cover ring-1 ring-brown/10"
+              />
+              {shot.caption && (
+                <figcaption class="mt-2 text-xs text-bark/80">{shot.caption}</figcaption>
+              )}
+            </figure>
+          ))}
+        </section>
+      )
+    }
+
+    {
+      data.status !== "shipped" && data.planned.length > 0 && (
+        <section class="reveal mt-12 rounded-[28px] bg-sage/10 p-8 ring-1 ring-moss/20">
+          <h2 class="font-display text-2xl text-brown">{t("work.plannedTitle")}</h2>
+          <ul class="mt-4 space-y-3 text-sm text-bark">
+            {data.planned.map((item) => (
+              <li class="flex items-start gap-3">
+                <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-moss" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      data.stack.length > 0 && (
+        <section class="mt-12 border-t border-brown/10 pt-8">
+          <h2 class="font-display text-lg text-brown">{t("work.stack")}</h2>
+          <div class="mt-3 flex flex-wrap gap-2">
+            {data.stack.map((tool) => (
+              <span class="rounded-full bg-amber/20 px-3 py-1 text-xs font-medium text-brown">
+                {tool}
+              </span>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      (data.links.live || data.links.source || data.links.caseStudyPdf) && (
+        <div class="mt-8 flex flex-wrap gap-3">
+          {data.links.live && (
+            <a
+              href={data.links.live}
+              rel="noopener noreferrer"
+              target="_blank"
+              class="rounded-full bg-terracotta px-5 py-2.5 text-sm font-semibold text-cream transition-transform hover:-translate-y-0.5"
+            >
+              {t("work.visit")}
+            </a>
+          )}
+          {data.links.source && (
+            <a
+              href={data.links.source}
+              rel="noopener noreferrer"
+              target="_blank"
+              class="rounded-full px-5 py-2.5 text-sm font-semibold text-brown ring-1 ring-brown/20 transition-transform hover:-translate-y-0.5"
+            >
+              {t("work.source")}
+            </a>
+          )}
+          {data.links.caseStudyPdf && (
+            <a
+              href={data.links.caseStudyPdf}
+              class="rounded-full px-5 py-2.5 text-sm font-semibold text-brown ring-1 ring-brown/20 transition-transform hover:-translate-y-0.5"
+            >
+              PDF
+            </a>
+          )}
+        </div>
+      )
+    }
+
+    <p class="mt-10 text-xs text-bark/60">{formatDate(data.date, lang)}</p>
+  </article>
+</BaseLayout>

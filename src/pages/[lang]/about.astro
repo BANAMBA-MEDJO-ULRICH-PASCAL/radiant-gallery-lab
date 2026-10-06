@@ -1,0 +1,94 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+
+import { type Locale } from "@/config/site";
+import { useTranslations, localePath, localeStaticPaths } from "@/i18n/utils";
+import { aboutCopy } from "@/data/about";
+
+export const getStaticPaths = localeStaticPaths;
+
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+const copy = aboutCopy[lang];
+
+/** Dropped in at /cv-en.pdf and /cv-fr.pdf once the rewritten CV is ready. */
+const cvHref = `/cv-${lang}.pdf`;
+---
+
+<BaseLayout {lang} title={t("about.title")} description={copy.lead}>
+  <div class="mx-auto max-w-5xl px-6 pb-16">
+    <PageHeader
+      title={t("home.about.title")}
+      lead={copy.lead}
+      eyebrow={t("home.about.eyebrow")}
+    />
+
+    <div class="grid gap-10 sm:grid-cols-5">
+      <div class="prose-portfolio reveal sm:col-span-3">
+        {copy.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a
+            href={localePath(lang, "contact")}
+            class="rounded-full bg-terracotta px-5 py-2.5 text-sm font-semibold text-cream no-underline transition-transform hover:-translate-y-0.5"
+          >
+            {t("home.cta.primary")}
+          </a>
+          <a
+            href={cvHref}
+            class="rounded-full px-5 py-2.5 text-sm font-semibold text-brown no-underline ring-1 ring-brown/20 transition-transform hover:-translate-y-0.5"
+          >
+            {t("cv.download")}
+          </a>
+        </div>
+      </div>
+
+      <aside class="sm:col-span-2">
+        <div class="reveal rounded-[28px] bg-cream/70 p-6 ring-1 ring-brown/10">
+          <dl class="space-y-4">
+            {
+              copy.facts.map((fact) => (
+                <div>
+                  <dt class="text-xs tracking-wide text-bark/70 uppercase">{fact.label}</dt>
+                  <dd class="mt-1 text-sm font-medium text-brown">{fact.value}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+      </aside>
+    </div>
+
+    <section class="mt-16">
+      <h2 class="reveal font-display text-2xl text-brown">{copy.skillsTitle}</h2>
+      <div class="mt-6 grid gap-6 sm:grid-cols-3">
+        {
+          copy.skillGroups.map((group) => (
+            <div class="reveal rounded-[28px] bg-cream/80 p-6 ring-1 ring-brown/10">
+              <h3 class="font-display text-lg text-brown">{group.title}</h3>
+              <div class="mt-3 flex flex-wrap gap-2">
+                {group.items.map((item) => (
+                  <span class="rounded-full bg-amber/20 px-3 py-1 text-xs font-medium text-brown">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="reveal font-display text-2xl text-brown">{copy.languagesTitle}</h2>
+      <ul class="reveal mt-4 flex flex-wrap gap-3 text-sm text-bark">
+        {
+          copy.languages.map((language) => (
+            <li class="rounded-full bg-sage/20 px-4 py-1.5 text-moss">{language}</li>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
+</BaseLayout>

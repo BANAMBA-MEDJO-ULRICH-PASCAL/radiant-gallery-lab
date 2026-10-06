@@ -1,0 +1,39 @@
+---
+/**
+ * Root entry point.
+ *
+ * Render redirects `/` to `/en/` at the edge (see render.yaml), so this page is
+ * a fallback for local preview and for anything that bypasses that rule. It
+ * also upgrades French-speaking visitors to `/fr/` before paint.
+ *
+ * `noindex` keeps this shim out of search results — the canonical language
+ * homepages are `/en/` and `/fr/`.
+ */
+import { SITE_URL } from "@/config/site";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ulrich Pascal</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={`${SITE_URL}/en/`} />
+    <link rel="alternate" hreflang="en" href={`${SITE_URL}/en/`} />
+    <link rel="alternate" hreflang="fr" href={`${SITE_URL}/fr/`} />
+    <link rel="alternate" hreflang="x-default" href={`${SITE_URL}/en/`} />
+    <meta http-equiv="refresh" content="0; url=/en/" />
+    <script is:inline>
+      (function () {
+        var lang = (navigator.language || "en").toLowerCase();
+        window.location.replace(lang.indexOf("fr") === 0 ? "/fr/" : "/en/");
+      })();
+    </script>
+  </head>
+  <body>
+    <p>
+      Redirecting to <a href="/en/">English</a> — <a href="/fr/">Français</a>
+    </p>
+  </body>
+</html>

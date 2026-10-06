@@ -1,0 +1,238 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+
+import { profile, socials, type Locale } from "@/config/site";
+import { useTranslations, localeStaticPaths } from "@/i18n/utils";
+
+export const getStaticPaths = localeStaticPaths;
+
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+
+/**
+ * Web3Forms access key. This value is public by design — it only identifies
+ * which inbox a submission is routed to and cannot be used to read anything.
+ * It is injected at build time; if it's missing the form is replaced with
+ * direct contact details rather than rendering a form that silently fails.
+ */
+const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY as string | undefined;
+
+const directLinks = socials.filter(
+  (s): s is (typeof socials)[number] & { href: string } => Boolean(s.href),
+);
+
+const field =
+  "mt-1.5 w-full rounded-2xl bg-cream/80 px-4 py-3 text-sm text-brown ring-1 ring-brown/15 placeholder:text-bark/50 focus:ring-2 focus:ring-terracotta";
+const labelClass = "block text-sm font-medium text-brown";
+---
+
+<BaseLayout {lang} title={t("contact.title")} description={t("contact.lead")}>
+  <div class="mx-auto max-w-3xl px-6 pb-16">
+    <PageHeader title={t("contact.title")} lead={t("contact.lead")} />
+
+    <div class="grid gap-10 sm:grid-cols-5">
+      <div class="sm:col-span-3">
+        {
+          accessKey ? (
+            <form id="contact-form" class="reveal space-y-5" novalidate>
+              <input type="hidden" name="access_key" value={accessKey} />
+              <input type="hidden" name="from_name" value="Portfolio contact form" />
+              <input
+                type="hidden"
+                name="subject"
+                value="New message from your portfolio"
+              />
+
+              {/*
+                Spam trap: a real person never sees or fills this. Bots that
+                auto-complete every field do, and the submission is dropped.
+              */}
+              <div class="absolute left-[-9999px]" aria-hidden="true">
+                <label>
+                  Company website
+                  <input type="text" name="botcheck" tabindex="-1" autocomplete="off" />
+                </label>
+              </div>
+
+              <div>
+                <label class={labelClass} for="name">
+                  {t("contact.form.name")}
+                </label>
+                <input id="name" name="name" type="text" required maxlength="120" class={field} />
+              </div>
+
+              <div>
+                <label class={labelClass} for="email">
+                  {t("contact.form.email")}
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  maxlength="200"
+                  class={field}
+                />
+              </div>
+
+              <div>
+                <label class={labelClass} for="user_subject">
+                  {t("contact.form.subject")}
+                </label>
+                <input
+                  id="user_subject"
+                  name="user_subject"
+                  type="text"
+                  required
+                  maxlength="160"
+                  class={field}
+                />
+              </div>
+
+              <div>
+                <label class={labelClass} for="message">
+                  {t("contact.form.message")}
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows="6"
+                  required
+                  maxlength="4000"
+                  class={field}
+                />
+              </div>
+
+              <button
+                type="submit"
+                id="submit-button"
+                class="rounded-full bg-terracotta px-6 py-3 text-sm font-semibold text-cream transition-transform hover:-translate-y-0.5 disabled:opacity-60"
+              >
+                {t("contact.form.send")}
+              </button>
+
+              <p
+                id="form-status"
+                class="hidden rounded-2xl px-4 py-3 text-sm"
+                role="status"
+                aria-live="polite"
+              />
+            </form>
+          ) : (
+            <p class="reveal rounded-[28px] bg-cream/70 p-6 text-sm text-bark ring-1 ring-brown/10">
+              {t("contact.direct")}
+            </p>
+          )
+        }
+      </div>
+
+      <aside class="sm:col-span-2">
+        <div class="reveal rounded-[28px] bg-cream/70 p-6 ring-1 ring-brown/10">
+          <h2 class="font-display text-xl text-brown">{t("contact.direct")}</h2>
+          <ul class="mt-4 space-y-3 text-sm">
+            <li>
+              <a href={`mailto:${profile.email}`} class="text-terracotta hover:underline">
+                {profile.email}
+              </a>
+            </li>
+            <li>
+              <a href={`tel:${profile.phone}`} class="text-bark hover:underline">
+                {profile.phoneDisplay}
+              </a>
+            </li>
+            {
+              directLinks.map((s) => (
+                <li>
+                  <a
+                    href={s.href}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    class="text-bark hover:underline"
+                  >
+                    {s.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="mt-5 text-xs text-bark/70">
+            {profile.location.city}, {profile.location.country}
+          </p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
+
+<script
+  define:vars={{
+    successMsg: t("contact.form.success"),
+    errorMsg: t("contact.form.error"),
+    sendingMsg: t("contact.form.sending"),
+    sendMsg: t("contact.form.send"),
+  }}
+>
+  const form = document.getElementById("contact-form");
+
+  if (form) {
+    const status = document.getElementById("form-status");
+    const button = document.getElementById("submit-button");
+
+    // Second spam signal: anything submitted within 3 seconds of the page
+    // loading is almost certainly automated.
+    const loadedAt = Date.now();
+
+    const show = (message, ok) => {
+      status.textContent = message;
+      status.classList.remove("hidden");
+      status.classList.toggle("bg-sage/20", ok);
+      status.classList.toggle("text-moss", ok);
+      status.classList.toggle("bg-destructive/10", !ok);
+      status.classList.toggle("text-destructive", !ok);
+    };
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const data = new FormData(form);
+
+      if (data.get("botcheck") || Date.now() - loadedAt < 3000) {
+        // Report success to the bot without sending anything.
+        show(successMsg, true);
+        form.reset();
+        return;
+      }
+
+      // Web3Forms uses `subject` for the email subject line; the visitor's own
+      // subject is carried separately so both end up in the message.
+      data.set("subject", `Portfolio: ${data.get("user_subject")}`);
+
+      button.disabled = true;
+      button.textContent = sendingMsg;
+
+      try {
+        const response = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: { Accept: "application/json" },
+          body: data,
+        });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        show(successMsg, true);
+        form.reset();
+      } catch {
+        show(errorMsg, false);
+      } finally {
+        button.disabled = false;
+        button.textContent = sendMsg;
+      }
+    });
+  }
+</script>

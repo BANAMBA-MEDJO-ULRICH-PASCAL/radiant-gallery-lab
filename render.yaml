@@ -1,0 +1,84 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+#
+# Deploys the portfolio as a Static Site: free, served from Render's CDN, with
+# no server process and therefore no cold start. Connect this repository in the
+# Render dashboard (New → Blueprint) and it reads this file.
+
+services:
+  - type: web
+    runtime: static
+    name: ulrich-pascal-portfolio
+    branch: main
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+
+    envVars:
+      # Pinned because a transitive dependency requires Node >= 22.
+      - key: NODE_VERSION
+        value: "22"
+      # Public Web3Forms identifier for the contact form. Set the value in the
+      # Render dashboard; `sync: false` keeps it out of this file.
+      - key: PUBLIC_WEB3FORMS_KEY
+        sync: false
+
+    headers:
+      # --- Security -------------------------------------------------------
+      - path: /*
+        name: Content-Security-Policy
+        # No inline/remote scripts beyond our own bundle; the two inline blocks
+        # in BaseLayout are covered by 'unsafe-inline' for scripts ONLY because
+        # a static host cannot issue per-request nonces. Everything else is
+        # locked to same-origin, and form submissions may only reach Web3Forms.
+        value: >-
+          default-src 'self';
+          script-src 'self' 'unsafe-inline';
+          style-src 'self' 'unsafe-inline';
+          img-src 'self' data: blob:;
+          font-src 'self';
+          connect-src 'self' https://api.web3forms.com;
+          form-action 'self' https://api.web3forms.com;
+          frame-ancestors 'none';
+          base-uri 'self';
+          object-src 'none';
+          upgrade-insecure-requests
+
+      - path: /*
+        name: Strict-Transport-Security
+        value: max-age=63072000; includeSubDomains; preload
+
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+
+      - path: /*
+        name: Cross-Origin-Opener-Policy
+        value: same-origin
+
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+
+      # --- Caching --------------------------------------------------------
+      # Astro fingerprints these filenames, so they can be cached forever.
+      - path: /_astro/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+
+      - path: /fonts/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+
+    routes:
+      # Send the bare domain to the English homepage. The static `index.html`
+      # Astro emits also upgrades French speakers to /fr/ client-side.
+      - type: redirect
+        source: /
+        destination: /en/

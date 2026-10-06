@@ -1,0 +1,118 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import ProjectCard from "@/components/ProjectCard.astro";
+
+import { PILLARS, type Locale } from "@/config/site";
+import { useTranslations, localeStaticPaths } from "@/i18n/utils";
+import { getProjects } from "@/lib/content";
+import type { UIKey } from "@/i18n/ui";
+
+export const getStaticPaths = localeStaticPaths;
+
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+
+const projects = await getProjects(lang);
+
+// Only offer filters for disciplines that actually have work behind them, so
+// the visitor never clicks into an empty result.
+const usedPillars = PILLARS.filter((p) =>
+  projects.some((entry) => entry.data.pillar === p.id || entry.data.alsoPillars.includes(p.id)),
+);
+---
+
+<BaseLayout {lang} title={t("work.title")} description={t("work.lead")}>
+  <div class="mx-auto max-w-5xl px-6 pb-16">
+    <PageHeader title={t("work.title")} lead={t("work.lead")} />
+
+    {
+      usedPillars.length > 1 && (
+        <div
+          class="reveal mb-10 flex flex-wrap gap-2"
+          role="group"
+          aria-label={t("work.filter.label")}
+        >
+          <button
+            type="button"
+            class="filter-btn is-active rounded-full px-4 py-2 text-sm font-medium ring-1 ring-brown/15 transition-transform hover:-translate-y-0.5"
+            data-filter="all"
+            aria-pressed="true"
+          >
+            {t("work.filter.all")}
+          </button>
+          {usedPillars.map((p) => (
+            <button
+              type="button"
+              class="filter-btn rounded-full px-4 py-2 text-sm font-medium ring-1 ring-brown/15 transition-transform hover:-translate-y-0.5"
+              data-filter={p.id}
+              aria-pressed="false"
+            >
+              {t(`pillar.${p.id}.name` as UIKey)}
+            </button>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      projects.length > 0 ? (
+        <div id="project-grid" class="grid gap-6 sm:grid-cols-2">
+          {projects.map((entry) => (
+            <div
+              class="project-item contents"
+              data-pillars={[entry.data.pillar, ...entry.data.alsoPillars].join(" ")}
+            >
+              <ProjectCard {entry} {lang} />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p class="rounded-[28px] bg-cream/60 p-8 text-sm text-bark ring-1 ring-brown/10">
+          {t("home.work.empty")}
+        </p>
+      )
+    }
+
+    <p id="no-results" class="hidden pt-4 text-sm text-bark">{t("work.noResults")}</p>
+  </div>
+</BaseLayout>
+
+<style>
+  .filter-btn.is-active {
+    background-color: var(--color-terracotta);
+    color: var(--color-cream);
+    --tw-ring-color: var(--color-terracotta);
+  }
+</style>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>(".filter-btn");
+  const items = document.querySelectorAll<HTMLElement>(".project-item");
+  const noResults = document.getElementById("no-results");
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const filter = button.dataset.filter ?? "all";
+
+      buttons.forEach((b) => {
+        const active = b === button;
+        b.classList.toggle("is-active", active);
+        b.setAttribute("aria-pressed", String(active));
+      });
+
+      let visible = 0;
+      items.forEach((item) => {
+        const pillars = (item.dataset.pillars ?? "").split(" ");
+        const show = filter === "all" || pillars.includes(filter);
+        // `contents` keeps the wrapper out of the grid layout, so toggling to
+        // `none` is what actually removes the card from the flow.
+        item.classList.toggle("contents", show);
+        item.classList.toggle("hidden", !show);
+        if (show) visible += 1;
+      });
+
+      noResults?.classList.toggle("hidden", visible > 0);
+    });
+  });
+</script>

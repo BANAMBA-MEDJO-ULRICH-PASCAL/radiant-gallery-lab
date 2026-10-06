@@ -1,0 +1,31 @@
+---
+/**
+ * The soft teal/sage gradient blobs behind every page.
+ *
+ * Purely decorative, so it's hidden from assistive technology and ignores
+ * pointer events. The colours now come from palette tokens rather than
+ * hard-coded hex values, so they retune correctly in dark mode.
+ */
+---
+
+<div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+  <div class="caustic absolute -top-40 -right-32 size-[560px] rounded-full bg-orb-1/45 blur-3xl"></div>
+  <div
+    class="caustic absolute top-1/3 -left-40 size-[520px] rounded-full bg-orb-2/35 blur-3xl"
+    style="animation-delay: -4s"
+  >
+  </div>
+  <div
+    class="caustic absolute bottom-0 right-1/4 size-[460px] rounded-full bg-orb-3/25 blur-3xl"
+    style="animation-delay: -8s"
+  >
+  </div>
+  <div
+    class="floaty absolute -top-10 right-10 size-40 rounded-full bg-white/20 ring-1 ring-white/30 backdrop-blur-lg"
+  >
+  </div>
+  <div
+    class="floaty-slow absolute top-[70%] left-8 size-28 rounded-full bg-white/20 ring-1 ring-white/30 backdrop-blur-lg"
+  >
+  </div>
+</div>

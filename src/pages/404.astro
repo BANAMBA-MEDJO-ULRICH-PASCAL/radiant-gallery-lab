@@ -1,0 +1,38 @@
+---
+/**
+ * Single 404 for the whole site. It can't know the visitor's language from a
+ * static host, so it offers both — which is more honest than guessing wrong.
+ */
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { useTranslations } from "@/i18n/utils";
+
+const t = useTranslations("en");
+const tFr = useTranslations("fr");
+---
+
+<BaseLayout lang="en" title={t("notFound.title")} description={t("notFound.body")}>
+  <div class="mx-auto flex max-w-xl flex-col items-center px-6 py-24 text-center">
+    <p class="font-display text-7xl font-semibold text-brown">404</p>
+
+    <h1 class="mt-6 font-display text-2xl text-brown">{t("notFound.title")}</h1>
+    <p class="mt-2 text-sm text-bark">{t("notFound.body")}</p>
+
+    <p class="mt-6 font-display text-2xl text-brown">{tFr("notFound.title")}</p>
+    <p class="mt-2 text-sm text-bark">{tFr("notFound.body")}</p>
+
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a
+        href="/en/"
+        class="rounded-full bg-terracotta px-5 py-2.5 text-sm font-semibold text-cream transition-transform hover:-translate-y-0.5"
+      >
+        {t("notFound.home")}
+      </a>
+      <a
+        href="/fr/"
+        class="rounded-full px-5 py-2.5 text-sm font-semibold text-brown ring-1 ring-brown/20 transition-transform hover:-translate-y-0.5"
+      >
+        {tFr("notFound.home")}
+      </a>
+    </div>
+  </div>
+</BaseLayout>

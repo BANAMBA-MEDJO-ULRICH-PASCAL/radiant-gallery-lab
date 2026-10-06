@@ -1,0 +1,88 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+
+import { type Locale } from "@/config/site";
+import { useTranslations, localeStaticPaths, formatDate } from "@/i18n/utils";
+import { getCertifications } from "@/lib/content";
+
+export const getStaticPaths = localeStaticPaths;
+
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+
+const certifications = await getCertifications();
+
+const areaLabels: Record<Locale, Record<string, string>> = {
+  en: {
+    ads: "Advertising",
+    analytics: "Analytics & measurement",
+    seo: "SEO",
+    security: "Security",
+    development: "Development",
+    other: "Other",
+  },
+  fr: {
+    ads: "Publicité",
+    analytics: "Analytics & mesure",
+    seo: "SEO",
+    security: "Sécurité",
+    development: "Développement",
+    other: "Autres",
+  },
+};
+
+// Group by area so related credentials read as a block rather than a long list.
+const grouped = certifications.reduce<Record<string, typeof certifications>>((acc, entry) => {
+  (acc[entry.data.area] ??= []).push(entry);
+  return acc;
+}, {});
+---
+
+<BaseLayout {lang} title={t("certifications.title")} description={t("certifications.lead")}>
+  <div class="mx-auto max-w-5xl px-6 pb-16">
+    <PageHeader title={t("certifications.title")} lead={t("certifications.lead")} />
+
+    {
+      certifications.length === 0 ? (
+        <p class="rounded-[28px] bg-cream/60 p-8 text-sm text-bark ring-1 ring-brown/10">
+          {t("blog.empty")}
+        </p>
+      ) : (
+        Object.entries(grouped).map(([area, entries]) => (
+          <section class="mb-12">
+            <h2 class="reveal font-display text-2xl text-brown">
+              {areaLabels[lang][area] ?? area}
+            </h2>
+            <div class="mt-5 grid gap-4 sm:grid-cols-2">
+              {entries.map(({ data }) => (
+                <div class="reveal rounded-[24px] bg-cream/80 p-6 ring-1 ring-brown/10">
+                  <h3 class="font-display text-lg text-brown">{data.name[lang]}</h3>
+                  <p class="mt-1 text-xs tracking-wide text-bark/70 uppercase">
+                    {t("certifications.issuer")} {data.issuer}
+                  </p>
+                  {data.description && (
+                    <p class="mt-3 text-sm text-bark">{data.description[lang]}</p>
+                  )}
+                  <div class="mt-4 flex flex-wrap items-center gap-3 text-xs text-bark/70">
+                    {data.issued && <span>{formatDate(data.issued, lang)}</span>}
+                    {data.credentialUrl && (
+                      <a
+                        href={data.credentialUrl}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                        class="font-semibold text-terracotta hover:underline"
+                      >
+                        {t("work.visit")}
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))
+      )
+    }
+  </div>
+</BaseLayout>

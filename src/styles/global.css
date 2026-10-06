@@ -1,0 +1,384 @@
+@import "tailwindcss";
+
+/*
+ * Warm Letterpress Journal design system.
+ * Warm cream/paper palette with terracotta, amber, sage, moss, brown accents.
+ * Fraunces display + Karla body.
+ *
+ * Carried over unchanged from the original design. Fonts are now self-hosted
+ * (see BaseLayout) rather than loaded from the Google Fonts CDN, which removes
+ * a third-party request and lets the CSP stay tight.
+ */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Warm palette tokens */
+  --color-paper: var(--paper);
+  --color-cream: var(--cream);
+  --color-terracotta: var(--terracotta);
+  --color-amber: var(--amber);
+  --color-sage: var(--sage);
+  --color-moss: var(--moss);
+  --color-brown: var(--brown);
+  --color-bark: var(--bark);
+
+  /* Background orb teals — were hard-coded hex values, now tokens so dark mode
+     can retune them alongside everything else. */
+  --color-orb-1: var(--orb-1);
+  --color-orb-2: var(--orb-2);
+  --color-orb-3: var(--orb-3);
+
+  --font-display: "Fraunces Variable", Fraunces, Georgia, serif;
+  --font-body: "Karla Variable", Karla, system-ui, sans-serif;
+}
+
+:root {
+  --radius: 0.75rem;
+
+  /* Warm palette */
+  --paper: oklch(0.93 0.025 75);
+  --cream: oklch(0.96 0.018 80);
+  --terracotta: oklch(0.58 0.13 38);
+  --amber: oklch(0.76 0.11 65);
+  --sage: oklch(0.62 0.03 120);
+  --moss: oklch(0.48 0.04 125);
+  --brown: oklch(0.31 0.03 50);
+  --bark: oklch(0.44 0.035 50);
+
+  --orb-1: oklch(0.45 0.06 190);
+  --orb-2: oklch(0.54 0.06 185);
+  --orb-3: oklch(0.65 0.05 175);
+
+  /* Semantic mapping to warm palette */
+  --background: var(--paper);
+  --foreground: var(--brown);
+  --card: var(--cream);
+  --card-foreground: var(--brown);
+  --primary: var(--terracotta);
+  --primary-foreground: var(--cream);
+  --secondary: oklch(0.88 0.02 75);
+  --secondary-foreground: var(--brown);
+  --muted: oklch(0.88 0.02 75);
+  --muted-foreground: var(--bark);
+  --accent: oklch(0.85 0.04 75);
+  --accent-foreground: var(--brown);
+  --destructive: oklch(0.55 0.2 27);
+  --destructive-foreground: var(--cream);
+  --border: oklch(0.85 0.02 60);
+  --input: oklch(0.85 0.02 60);
+  --ring: var(--terracotta);
+
+  color-scheme: light;
+}
+
+.dark {
+  --paper: oklch(0.22 0.02 50);
+  --cream: oklch(0.27 0.025 50);
+  --terracotta: oklch(0.68 0.14 38);
+  --amber: oklch(0.78 0.12 65);
+  --sage: oklch(0.7 0.04 120);
+  --moss: oklch(0.62 0.05 125);
+  --brown: oklch(0.92 0.015 80);
+  --bark: oklch(0.78 0.02 75);
+
+  --orb-1: oklch(0.38 0.05 190);
+  --orb-2: oklch(0.42 0.05 185);
+  --orb-3: oklch(0.48 0.04 175);
+
+  --background: var(--paper);
+  --foreground: var(--brown);
+  --card: var(--cream);
+  --card-foreground: var(--brown);
+  --primary: var(--terracotta);
+  --primary-foreground: var(--cream);
+  --secondary: oklch(0.34 0.02 50);
+  --secondary-foreground: var(--brown);
+  --muted: oklch(0.34 0.02 50);
+  --muted-foreground: var(--bark);
+  --accent: oklch(0.34 0.03 50);
+  --accent-foreground: var(--brown);
+  --destructive: oklch(0.6 0.18 27);
+  --destructive-foreground: var(--cream);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: var(--terracotta);
+
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Stops the page jumping horizontally when a scrollbar appears/disappears. */
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Visible keyboard focus everywhere, in the site's own accent rather than the
+     browser default. */
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Headings carry the display face by default so individual pages don't have
+     to remember to set it. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+/* Skip link — hidden until focused, then pinned to the top-left. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 9999px;
+  background-color: var(--color-terracotta);
+  color: var(--color-cream);
+  font-weight: 600;
+}
+
+/*
+ * Long-form body copy for MDX case studies and journal articles.
+ * Written by hand rather than pulling in @tailwindcss/typography, which would
+ * add a dependency and then need overriding to match this palette anyway.
+ */
+.prose-portfolio {
+  color: var(--color-bark);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.prose-portfolio > * + * {
+  margin-top: 1.25rem;
+}
+
+.prose-portfolio h2 {
+  margin-top: 2.5rem;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  line-height: 1.25;
+  color: var(--color-brown);
+}
+
+.prose-portfolio h3 {
+  margin-top: 2rem;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--color-brown);
+}
+
+.prose-portfolio strong {
+  font-weight: 600;
+  color: var(--color-brown);
+}
+
+.prose-portfolio a {
+  color: var(--color-terracotta);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose-portfolio ul,
+.prose-portfolio ol {
+  padding-left: 1.25rem;
+}
+
+.prose-portfolio ul {
+  list-style: disc;
+}
+
+.prose-portfolio ol {
+  list-style: decimal;
+}
+
+.prose-portfolio li + li {
+  margin-top: 0.5rem;
+}
+
+.prose-portfolio blockquote {
+  border-left: 3px solid var(--color-terracotta);
+  padding-left: 1.25rem;
+  font-style: italic;
+  color: var(--color-brown);
+}
+
+.prose-portfolio code {
+  border-radius: 0.375rem;
+  background-color: color-mix(in oklch, var(--color-brown) 8%, transparent);
+  padding: 0.15em 0.4em;
+  font-size: 0.9em;
+}
+
+.prose-portfolio pre {
+  overflow-x: auto;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.prose-portfolio pre code {
+  background: none;
+  padding: 0;
+}
+
+.prose-portfolio img {
+  border-radius: 1.25rem;
+}
+
+.prose-portfolio hr {
+  border-color: color-mix(in oklch, var(--color-brown) 12%, transparent);
+}
+
+@utility fade-up {
+  animation: fadeUp 0.9s ease both;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility floaty {
+  animation: floaty 7s ease-in-out infinite;
+}
+
+@utility floaty-slow {
+  animation: floaty 11s ease-in-out infinite;
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@utility caustic {
+  animation: caustic 14s ease-in-out infinite;
+}
+
+@keyframes caustic {
+  0%,
+  100% {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.15) translate(2%, -2%);
+    opacity: 0.75;
+  }
+}
+
+/*
+ * Scroll-triggered reveal. Elements start hidden and are revealed by an
+ * IntersectionObserver adding `.is-visible` (see BaseLayout).
+ *
+ * `.no-js` guard: if JavaScript never runs, the observer never fires, so the
+ * starting state must not hide content. The class is removed from <html> by an
+ * inline script before paint, so JS-enabled visitors still get the animation
+ * without a flash of visible content.
+ */
+.reveal {
+  opacity: 1;
+}
+
+html:not(.no-js) .reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+
+html:not(.no-js) .reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/*
+ * Accessibility: honour the OS "reduce motion" setting. Everything still
+ * renders — it just stops moving.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html:not(.no-js) .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
