@@ -57,6 +57,16 @@ export const serviceCopy: Record<Locale, Record<PillarId, ServiceCopy>> = {
         "Integration with the tools you already use",
       ],
     },
+    software: {
+      detail:
+        "Software that runs on a machine rather than in a browser — desktop applications and command-line tools, for the work that needs to happen offline, on a schedule, or faster than a web page can manage.",
+      deliverables: [
+        "Desktop applications with a real interface",
+        "Command-line tools and scripts",
+        "Calculation and processing engines",
+        "Unit-tested logic with clear error handling",
+      ],
+    },
     ads: {
       detail:
         "Google and Meta campaigns run end to end: structure, targeting, creative and the tracking that proves what worked. Certified across Search, Display, Measurement, Analytics and Tag Manager.",
@@ -121,6 +131,16 @@ export const serviceCopy: Record<Locale, Record<PillarId, ServiceCopy>> = {
         "Traitement de documents et de données",
         "Automatisation de workflows",
         "Intégration avec vos outils actuels",
+      ],
+    },
+    software: {
+      detail:
+        "Des logiciels qui tournent sur une machine plutôt que dans un navigateur — applications bureau et outils en ligne de commande, pour le travail qui doit se faire hors ligne, à heure fixe, ou plus vite qu'une page web ne le permet.",
+      deliverables: [
+        "Applications bureau avec une vraie interface",
+        "Outils et scripts en ligne de commande",
+        "Moteurs de calcul et de traitement",
+        "Logique testée unitairement, erreurs explicites",
       ],
     },
     ads: {
