@@ -1,0 +1,106 @@
+---
+title: "MyTech — Twelve Pages, No Framework"
+pillar: "web-development"
+summary: "A twelve-page corporate website for a fictional technology company, hand-coded in HTML, CSS and vanilla JavaScript — no framework, no build step. Built on a CSS design-token system with reusable header and footer partials. The front end is complete; the backend is still to be written."
+status: "in-progress"
+planned:
+  - "A backend: real authentication in place of the demo login, and a contact form that actually delivers mail"
+  - "A dashboard fed by real data instead of the placeholder figures it shows today"
+  - "A content layer, so services, pricing and portfolio entries stop living in hand-edited markup"
+role: "Solo — design, markup, styling and interaction"
+period: "2025 — ongoing"
+date: 2025-11-23
+stack:
+  - "HTML5"
+  - "CSS3"
+  - "JavaScript (ES6+)"
+  - "CSS custom properties"
+  - "CSS Grid & Flexbox"
+  - "Intersection Observer API"
+  - "Fetch API"
+  - "localStorage"
+results:
+  - "Twelve pages — marketing, legal, authentication and a dashboard — running on one stylesheet and one script, with no framework and no build step"
+  - "A design-token system in CSS custom properties: colour, spacing, type scale, shadow and radius each defined once at the root and consumed everywhere"
+  - "Interaction written by hand rather than pulled from libraries — scroll reveals, count-up statistics, a notification system, and a cookie banner that remembers its answer"
+  - "Accessible where accessibility is free: every one of the 17 images carries alt text, all 9 form controls are labelled, and icon-only buttons have aria-labels"
+cover: "../../../assets/projects/mytech-website/homepage-hero.png"
+coverAlt: "The MyTech homepage: a sticky navigation bar, the headline “Empowering Tomorrow, Simplified Today”, and three floating cards for cloud infrastructure, cybersecurity and AI"
+featured: false
+order: 50
+---
+
+## The problem
+
+A collection of small demos never answers the question a prospective client
+actually has, which is not "can you style a button?" but **"can you build the
+whole thing?"** A single page proves almost nothing. The difficulty in a real
+website is not any individual screen — it is holding twenty decisions steady
+across a dozen of them, so that page eleven still looks like it belongs beside
+page one.
+
+So I set myself the brief rather than waiting for it: a complete corporate site
+for a fictional technology company, MyTech. Everything a company of that kind
+actually needs, built to the point where only a server is missing.
+
+## The approach
+
+**Tokens before pages.** The first thing written was not a page, it was a
+`:root` block: two brand colours, a six-step spacing scale, a seven-step type
+scale, four shadows and three corner radii. Every rule after that consumes
+those variables instead of literal values. It is a small discipline with a large
+payoff — the palette and the rhythm of the whole site change from one block, and
+nothing drifts, because no page has its own private idea of what "medium
+spacing" means.
+
+**Extract what repeats.** The header and footer live in `partials/header.html`
+and `partials/footer.html` and are fetched at runtime into a placeholder
+element. A navigation change is then one edit rather than twelve. The loader
+also carries a hard-coded fallback header, so a failed fetch degrades to a
+usable logo and link instead of a page with no way out.
+
+**No libraries.** Every interaction is written by hand, which was the point of
+the exercise: a sticky header that gains its shadow on scroll, anchor links that
+scroll smoothly with an offset for that header, scroll-triggered reveals through
+`IntersectionObserver`, statistics that count up when they come into view,
+images deferred behind `data-src`, a scroll-to-top button, a toast notification
+system, and a cookie-consent banner that stores the answer in `localStorage` so
+it asks once and not again. The contact form validates its fields and the email
+format client-side before it would ever reach a server.
+
+**Accessibility where it costs nothing.** Labelled form controls, `aria-label`
+on every icon-only control, alt text on all seventeen images, and a mobile menu
+that closes on a link click, on an outside click, and restores body scroll when
+it does.
+
+## Where it stands
+
+**The front end is complete; there is no backend.** That boundary is worth
+stating plainly, because the site looks finished and is not:
+
+- The login page accepts anything and forwards you to the dashboard. There is no
+  authentication behind it.
+- The dashboard is a real layout populated by **"Demo User"** and placeholder
+  rows.
+- The contact form validates properly, then simulates a send.
+- MyTech is an invented company. The figures on the homepage — projects
+  delivered, uptime, enterprise clients — are **placeholder copy for a fictional
+  business**, not results of mine.
+
+What that leaves is the part a backend cannot fake: structure, consistency and
+interaction across twelve pages.
+
+## What I took from it
+
+Two things, one of them uncomfortable.
+
+The useful one: **design tokens are what make a multi-page site cohere.** Once
+spacing and type came from a scale rather than from judgement each time, pages
+started matching each other without any effort to make them match.
+
+The uncomfortable one: three of the twelve pages still carry their header inline
+instead of using the partial, because I built those before extracting the
+partial and never went back. It costs nothing today and it will cost something
+the day the navigation changes. **Extract the repeating piece before you have
+twelve copies of it, not after** — the refactor is cheap at page three and
+tedious at page twelve.

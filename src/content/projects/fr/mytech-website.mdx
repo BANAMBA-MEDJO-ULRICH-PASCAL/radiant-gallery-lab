@@ -1,0 +1,110 @@
+---
+title: "MyTech — Douze pages, sans framework"
+pillar: "web-development"
+summary: "Un site vitrine de douze pages pour une entreprise technologique fictive, codé à la main en HTML, CSS et JavaScript natif — sans framework ni étape de build. Bâti sur un système de tokens CSS, avec en-tête et pied de page réutilisables. L'interface est terminée ; le backend reste à écrire."
+status: "in-progress"
+planned:
+  - "Un backend : une authentification réelle à la place de la connexion de démonstration, et un formulaire de contact qui délivre vraiment les messages"
+  - "Un tableau de bord alimenté par de vraies données au lieu des chiffres fictifs qu'il affiche aujourd'hui"
+  - "Une couche de contenu, pour que services, tarifs et réalisations cessent de vivre dans du balisage édité à la main"
+role: "Seul — design, balisage, styles et interactions"
+period: "2025 — en cours"
+date: 2025-11-23
+stack:
+  - "HTML5"
+  - "CSS3"
+  - "JavaScript (ES6+)"
+  - "Propriétés personnalisées CSS"
+  - "CSS Grid & Flexbox"
+  - "API Intersection Observer"
+  - "API Fetch"
+  - "localStorage"
+results:
+  - "Douze pages — vitrine, mentions légales, authentification et tableau de bord — portées par une seule feuille de style et un seul script, sans framework ni étape de build"
+  - "Un système de tokens en propriétés personnalisées CSS : couleur, espacement, échelle typographique, ombres et rayons définis une fois à la racine et consommés partout"
+  - "Des interactions écrites à la main plutôt qu'empruntées à des bibliothèques — révélations au défilement, compteurs animés, système de notifications, et une bannière de cookies qui retient la réponse"
+  - "Accessible là où l'accessibilité ne coûte rien : les 17 images portent toutes un texte alternatif, les 9 champs de formulaire sont tous étiquetés, et les boutons sans libellé ont un aria-label"
+cover: "../../../assets/projects/mytech-website/homepage-hero.png"
+coverAlt: "La page d'accueil MyTech : une barre de navigation fixe, le titre « Empowering Tomorrow, Simplified Today » et trois cartes flottantes pour le cloud, la cybersécurité et l'IA"
+featured: false
+order: 50
+---
+
+## Le problème
+
+Une collection de petites démos ne répond jamais à la question que se pose
+réellement un client potentiel. Cette question n'est pas « sais-tu styler un
+bouton ? » mais **« sais-tu construire l'ensemble ? »** Une page isolée ne prouve
+presque rien. La difficulté d'un vrai site web ne réside pas dans tel ou tel
+écran : elle consiste à tenir vingt décisions stables sur une douzaine de pages,
+pour que la page onze ait encore l'air d'appartenir au même site que la page une.
+
+Je me suis donc donné le cahier des charges au lieu d'attendre qu'on me le
+confie : un site vitrine complet pour une entreprise technologique fictive,
+MyTech. Tout ce dont une société de ce type a réellement besoin, construit
+jusqu'au point où il ne manque plus qu'un serveur.
+
+## L'approche
+
+**Les tokens avant les pages.** La première chose écrite n'a pas été une page,
+mais un bloc `:root` : deux couleurs de marque, une échelle d'espacement à six
+niveaux, une échelle typographique à sept niveaux, quatre ombres et trois rayons
+de bordure. Chaque règle ensuite consomme ces variables au lieu de valeurs
+littérales. Petite discipline, grand bénéfice — la palette et le rythme de tout
+le site se modifient depuis un seul bloc, et rien ne dérive, puisque aucune page
+n'a sa propre idée de ce que signifie « espacement moyen ».
+
+**Extraire ce qui se répète.** L'en-tête et le pied de page vivent dans
+`partials/header.html` et `partials/footer.html`, chargés à l'exécution dans un
+élément d'accueil. Un changement de navigation devient alors une seule
+modification au lieu de douze. Le chargeur embarque aussi un en-tête de repli
+codé en dur : un chargement échoué dégrade vers un logo et un lien utilisables
+plutôt que vers une page sans issue.
+
+**Aucune bibliothèque.** Chaque interaction est écrite à la main, et c'était tout
+l'intérêt de l'exercice : un en-tête fixe qui gagne son ombre au défilement, des
+liens d'ancrage qui défilent en douceur avec un décalage pour cet en-tête, des
+révélations au défilement via `IntersectionObserver`, des statistiques qui
+s'incrémentent à l'entrée dans le champ de vision, des images différées derrière
+`data-src`, un bouton de retour en haut, un système de notifications, et une
+bannière de consentement aux cookies qui stocke la réponse dans `localStorage`
+afin de ne demander qu'une fois. Le formulaire de contact valide ses champs et le
+format de l'adresse côté client avant même d'atteindre un serveur.
+
+**L'accessibilité là où elle ne coûte rien.** Des champs étiquetés, un
+`aria-label` sur chaque commande réduite à une icône, un texte alternatif sur
+les dix-sept images, et un menu mobile qui se ferme au clic sur un lien comme au
+clic à l'extérieur, en rétablissant le défilement de la page.
+
+## Où en est le projet
+
+**L'interface est terminée ; il n'y a pas de backend.** Cette frontière mérite
+d'être dite clairement, car le site a l'air achevé et ne l'est pas :
+
+- La page de connexion accepte n'importe quoi et vous renvoie vers le tableau de
+  bord. Il n'y a aucune authentification derrière.
+- Le tableau de bord est une vraie mise en page peuplée par un
+  **« Demo User »** et des lignes fictives.
+- Le formulaire de contact valide correctement, puis simule l'envoi.
+- MyTech est une entreprise inventée. Les chiffres de la page d'accueil —
+  projets livrés, disponibilité, clients grands comptes — sont du **texte fictif
+  pour une société fictive**, et non des résultats qui m'appartiennent.
+
+Reste donc la part qu'aucun backend ne peut simuler : la structure, la cohérence
+et l'interaction sur douze pages.
+
+## Ce que j'en retire
+
+Deux choses, dont une inconfortable.
+
+L'utile : **ce sont les tokens de design qui font tenir un site multipage.** Dès
+que l'espacement et la typographie ont découlé d'une échelle plutôt que d'un
+jugement répété à chaque fois, les pages ont commencé à s'accorder entre elles
+sans aucun effort pour les accorder.
+
+L'inconfortable : trois des douze pages portent encore leur en-tête en ligne au
+lieu d'utiliser le partial, parce que je les avais construites avant de
+l'extraire et que je n'y suis jamais revenu. Cela ne coûte rien aujourd'hui et
+cela coûtera quelque chose le jour où la navigation changera. **Extraire
+l'élément répété avant d'en avoir douze copies, et non après** — le remaniement
+est bon marché à la troisième page et fastidieux à la douzième.

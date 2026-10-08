@@ -1,0 +1,89 @@
+---
+title: "Scientific Calculator — Two Interfaces, One Engine"
+pillar: "software"
+summary: "A Java scientific calculator with twenty-seven operations behind two separate front ends: a grouped console menu and a tabbed Swing window. My part was both interfaces and the exception layer that turns every mathematical edge case into a named, readable error."
+status: "in-progress"
+planned:
+  - "Rebuilding it as a distributable application rather than a project you run from an IDE"
+  - "An expression parser, so you can type `sin(45) + 3!` instead of picking operations from a menu"
+  - "Calculation history, and memory that survives closing the window"
+role: "Console interface, Swing interface and the exception layer (two-person project)"
+period: "2026 — ongoing"
+date: 2026-08-06
+stack:
+  - "Java 17"
+  - "Swing"
+  - "FlatLaf"
+  - "JUnit"
+results:
+  - "Twenty-seven operations — arithmetic, trigonometric, inverse and hyperbolic functions, logarithms, factorials, permutations and combinations, plus memory"
+  - "One engine behind two independent interfaces: a grouped console menu and a six-tab Swing window, neither aware of the other"
+  - "A dedicated exception type with a named factory per failure case, so a division by zero and a negative square root are distinguishable errors rather than one generic crash"
+  - "Every button in the GUI routes through a single helper, so error handling is written once instead of twenty-seven times"
+links:
+  source: "https://github.com/Steve-Random/Scientific-Calculator"
+featured: false
+order: 70
+---
+
+## The problem
+
+A calculator looks like a beginner exercise right up until you ask what should
+happen when someone asks for the square root of −4, the factorial of 2.5, or
+zero to the power of zero. Those aren't bugs to be prevented — they are
+**mathematically undefined inputs**, and a calculator's real quality is in how
+precisely it says so.
+
+This was a two-person project. A teammate built the calculation engine and its
+JUnit test suite. I built the two interfaces and the error layer between them.
+
+## The approach
+
+**Make the failures first-class.** The piece I'm most pleased with is the
+smallest: a single `InvalidInputException` with a named static factory for each
+way the mathematics can refuse an answer — `divisionByZero()`,
+`negativeSquareRoot()`, `logarithmOfNonPositive()`, `arcTrigOutOfRange()`,
+`negativeFactorial()`, `nonIntegerFactorial()`, `undefinedZeroPowerZero()`.
+
+Each one carries the explanation a user actually needs: *"Factorial requires a
+whole number (non-negative integer), not a decimal."* The engine never composes
+error strings, and neither interface has to guess what went wrong — the failure
+already knows how to describe itself, so both front ends present the same message
+without sharing a line of code.
+
+**Two interfaces, no shared state.** The console interface prints a menu of
+twenty-seven numbered operations grouped under headings — basic, trigonometric,
+hyperbolic, logarithmic, combinatorics, memory — and loops on input. The
+graphical interface is a Swing window organised into six tabs that mirror those
+same groups, styled with FlatLaf so it doesn't look like 2003.
+
+Both talk only to the engine. Neither knows the other exists, which is the point:
+the engine never had to change to gain a GUI.
+
+**Wire the buttons once.** Rather than attaching a listener to each of the
+graphical buttons by hand, every button is registered through one `addButton`
+helper that takes a label and a small functional interface permitted to throw
+`InvalidInputException`. That helper owns the try/catch, the result formatting
+and the error dialog. **Adding an operation is one line, and it cannot forget to
+handle its own errors** — there is only one place where errors are handled at
+all. A separate cancellation exception distinguishes "the user closed the input
+dialog" from "the maths failed", so cancelling is silent rather than an error.
+
+## Where it stands
+
+It runs, both interfaces work, and the engine is unit-tested. What it is not yet
+is an **application**: you launch it from an IDE, the two interfaces start
+together in one process, and memory is lost when you close it.
+
+Turning it into something a person could actually download and use is my next
+piece of work on it, and it is mine specifically — I'll be taking it from a
+project to a product.
+
+## What I took from it
+
+Designing the exception layer taught me more than the interfaces did. Before
+this I treated errors as something you detect and report; here they became
+something you **name**. Once each failure had its own factory method and its own
+sentence, the interface code got noticeably simpler — there was nothing left to
+decide at the point of failure, because the decision had already been made in the
+place that understood the mathematics.

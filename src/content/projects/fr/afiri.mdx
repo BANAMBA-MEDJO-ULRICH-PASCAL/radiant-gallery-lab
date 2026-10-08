@@ -1,0 +1,136 @@
+---
+title: "Afiri — Une plateforme d'emploi construite par vingt-et-un étudiants"
+pillar: "web-apps"
+alsoPillars: ["security"]
+summary: "Une plateforme biface reliant les étudiants camerounais aux stages et aux employeurs locaux : offres filtrées, mini-CV à lien partageable et quiz d'orientation calé sur les filières camerounaises. Construite en deux semaines par une équipe de vingt-et-un, répartie en huit pôles."
+status: "in-progress"
+planned:
+  - "Achever le durcissement de sécurité que notre propre audit a réclamé, avant tout lancement public"
+  - "Une messagerie directe entre étudiants et recruteurs, et des notifications automatiques au changement de statut d'une candidature"
+  - "Un module de mentorat mettant les étudiants en relation avec des diplômés de leur propre filière"
+  - "Une application mobile native, et une extension au-delà du Cameroun vers l'Afrique centrale"
+role: "Responsable business, finance, marché et RH · membre du pôle back-end · auteur du tableau de bord analytique"
+period: "2026 — deux semaines de développement"
+date: 2026-07-12
+stack:
+  - "Python"
+  - "FastAPI"
+  - "SQLAlchemy"
+  - "PostgreSQL"
+  - "SQLite"
+  - "JWT"
+  - "bcrypt"
+  - "Chart.js"
+  - "JavaScript"
+  - "Render"
+results:
+  - "Livré et déployé publiquement en deux semaines par une équipe de 21 personnes répartie en huit pôles spécialisés"
+  - "J'ai construit le tableau de bord analytique de bout en bout — cinq compteurs d'indicateurs en direct, deux visualisations Chart.js et un rafraîchissement automatique toutes les 30 secondes, servi directement par l'API"
+  - "J'ai piloté le volet business du rapport : analyse de marché, étude concurrentielle, business model canvas, projections à trois ans, structure juridique et plan RH"
+  - "Un audit de sécurité a produit 15 constats, chacun documenté avec une sévérité et une correction précise — l'accès aux statistiques réservé aux administrateurs fait partie des corrections appliquées"
+cover: "../../../assets/projects/afiri/landing-hero.png"
+coverAlt: "La page d'accueil d'Afiri : le titre « Le pont entre tes études et ton premier vrai pas professionnel » sur un dégradé jaune chaud, avec les boutons pour créer un compte ou explorer les offres"
+links:
+  live: "https://afiri.onrender.com/"
+  source: "https://github.com/BANAMBA-MEDJO-ULRICH-PASCAL/Afiri"
+featured: false
+order: 25
+---
+
+## Le problème
+
+Au Cameroun, les offres de stage circulent dans des groupes WhatsApp. Sans
+filtre, sans archivage et sans moyen de distinguer une annonce réelle d'une
+annonce expirée : si l'on n'est pas dans le bon groupe à la bonne heure, on ne la
+voit tout simplement jamais. De l'autre côté, les petites entreprises constatent
+que **la plupart des candidatures reçues sont hors profil** : une société tech
+qui cherche un développeur reçoit des CV de comptables.
+
+LinkedIn ne résout pas cela localement. La plateforme est pensée pour des gens
+qui ont déjà une carrière à présenter, son offre payante exige une carte
+bancaire internationale que la plupart des étudiants et des PME camerounais
+n'ont pas, et elle ignore ce qu'est réellement un diplôme d'ingénieur de l'ENSP
+ou un BTS en génie civil.
+
+Afiri a été notre réponse : une plateforme pour les gens des deux côtés de ce
+fossé.
+
+## Ma part dans le projet
+
+L'équipe comptait **vingt-et-une personnes** réparties en huit pôles, et il vaut
+la peine d'être précis sur ce qui m'incombait.
+
+**J'ai piloté le travail business, finance, marché et RH.** Analyse de marché et
+de la concurrence, les deux personas clients, le business model canvas, le modèle
+de revenus, les projections financières à trois ans et le calcul du seuil de
+rentabilité, le choix de la forme juridique dans le cadre OHADA, ainsi que le
+plan RH et de recrutement. Lorsque la première grille tarifaire s'est révélée
+incapable de couvrir notre propre base de coûts, je l'ai reprise — c'est la
+raison pour laquelle les paliers publiés sont à 30k/65k/120k FCFA et non aux
+10k/20k/30k de départ. J'ai également fait partie des trois personnes qui ont
+rédigé le rapport final.
+
+**Côté technique, j'étais membre du pôle back-end**, j'ai travaillé avec le pôle
+sécurité, relu le front-end et y ai apporté de petites corrections — et j'ai
+construit seul le **tableau de bord analytique d'administration**.
+
+## Le tableau de bord
+
+Le tableau de bord est une page autonome servie par FastAPI à l'adresse
+`/dashboard`. Elle s'authentifie via l'endpoint OAuth2 de l'API, conserve le JWT
+en mémoire plutôt qu'en stockage, puis alimente cinq compteurs d'indicateurs —
+utilisateurs totaux, étudiants, entreprises, offres actives, candidatures —
+depuis cinq endpoints analytiques. Deux visualisations Chart.js figurent en
+dessous : un anneau séparant étudiants et entreprises, et un graphique en barres
+horizontales des cinq secteurs qui publient le plus d'offres. Tout se recharge
+sur un compte à rebours visible de 30 secondes.
+
+Ce qui compte le plus à mes yeux n'est pas les graphiques, mais la règle d'accès
+derrière eux. **Chaque endpoint analytique vérifie le rôle de l'appelant avant de
+toucher à la base** et renvoie une 403 à quiconque n'est pas administrateur. Une
+version antérieure ne le faisait pas, et l'audit de sécurité l'a relevé — le
+corriger a mis fin à une situation où n'importe quel étudiant connecté pouvait
+lire ces chiffres.
+
+## Ce que fait la plateforme
+
+Les étudiants s'inscrivent, composent un mini-CV — nom, formation, université,
+compétences, projets — et obtiennent un **lien de partage court** qu'un recruteur
+peut ouvrir sans compte. Ils parcourent les offres filtrées par filière, ville et
+type de contrat, postulent en un clic et suivent le statut de chaque
+candidature. Un quiz de quatre questions rattache leurs réponses à l'un des dix
+domaines et renvoie des métiers suggérés, les réponses étant conservées pour que
+le résultat soit encore là à la visite suivante.
+
+Les entreprises publient des offres et disposent d'un tableau de bord comptant
+les candidatures par offre. La propriété est vérifiée côté serveur de bout en
+bout : une entreprise ne peut jamais lire ni modifier que **ses propres** offres
+et les candidatures qui s'y rattachent.
+
+## Remarques honnêtes
+
+Le projet a été construit en **deux semaines**, et c'est un MVP au sens strict :
+messagerie, notifications par e-mail, récupération de mot de passe et application
+mobile native ont tous été volontairement exclus du périmètre et documentés comme
+tels, plutôt que construits à moitié.
+
+L'équipe a aussi mené un **audit de sécurité sur son propre travail** et en a
+publié le résultat : quinze constats, chacun assorti d'une sévérité et d'une
+correction nommée. Certains sont corrigés ; les autres figurent en tête de la
+feuille de route. Auditer son propre projet et écrire ce que l'on y trouve est
+inconfortable, et c'est à mon sens la chose la plus professionnelle que nous
+ayons faite.
+
+## Ce que j'en retire
+
+Coordonner vingt-et-une personnes sur huit pôles a été plus difficile que
+n'importe quelle partie du code. Ce qui a fonctionné : des points d'avancement
+quotidiens et un dépôt partagé — et ce qui a failli tout casser : l'espace entre
+les pôles, là où chacun suppose que la jonction appartient à quelqu'un d'autre.
+
+L'autre leçon était commerciale, et elle m'a surpris : **notre premier modèle
+tarifaire était faux, et seule la projection financière l'a révélé.** Construire
+le modèle à trois ans n'était pas un exercice académique destiné à satisfaire un
+cahier des charges — c'est ce qui a montré que la plateforme ne pouvait pas
+s'autofinancer aux prix que nous avions choisis. Je ne l'aurais pas trouvé dans
+le code.

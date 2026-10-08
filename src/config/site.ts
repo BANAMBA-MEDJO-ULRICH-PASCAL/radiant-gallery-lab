@@ -49,6 +49,7 @@ export const PILLARS = [
   { id: "web-apps", craft: "build", accent: "moss" },
   { id: "security", craft: "build", accent: "bark" },
   { id: "ai-tools", craft: "build", accent: "sage" },
+  { id: "software", craft: "build", accent: "amber" },
   { id: "ads", craft: "market", accent: "amber" },
   { id: "seo", craft: "market", accent: "terracotta" },
 ] as const;
