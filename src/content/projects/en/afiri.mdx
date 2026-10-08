@@ -1,0 +1,117 @@
+---
+title: "Afiri — A Job Platform Built by Twenty-One Students"
+pillar: "web-apps"
+alsoPillars: ["security"]
+summary: "A two-sided platform connecting Cameroonian students to internships and local employers: filtered listings, a mini-CV with a shareable link, and a careers quiz built around Cameroonian degree programmes. Built in two weeks by a team of twenty-one, organised into eight poles."
+status: "shipped"
+role: "Business, finance, market and HR lead · back-end team member · built the admin analytics dashboard"
+period: "2026 — two-week build"
+date: 2026-07-12
+stack:
+  - "Python"
+  - "FastAPI"
+  - "SQLAlchemy"
+  - "PostgreSQL"
+  - "SQLite"
+  - "JWT"
+  - "bcrypt"
+  - "Chart.js"
+  - "JavaScript"
+  - "Render"
+results:
+  - "Shipped and publicly deployed in two weeks by a 21-person team split across eight specialised poles"
+  - "I built the admin analytics dashboard end to end — five live KPI counters, two Chart.js visualisations and a 30-second auto-refresh, served directly by the API"
+  - "I led the business side of the report: market analysis, competitor study, business model canvas, three-year projections, legal structure and the HR plan"
+  - "A security audit produced 15 findings, each documented with a severity and a specific remediation — admin-only analytics was one of the fixes that landed"
+links:
+  live: "https://afiri.onrender.com/"
+  source: "https://github.com/BANAMBA-MEDJO-ULRICH-PASCAL/Afiri"
+featured: false
+order: 60
+---
+
+## The problem
+
+In Cameroon, internship offers circulate in WhatsApp groups. There is no filter,
+no archive and no way to tell a real listing from a dead one — if you aren't in
+the right group at the right hour, you simply never see it. On the other side,
+small companies report that **most of the applications they receive are off
+profile**: a tech firm advertising for a developer gets CVs from accountants.
+
+LinkedIn does not solve this locally. It is built for people who already have a
+career to list, its paid tier needs an international bank card that most
+Cameroonian students and small firms do not have, and it has no idea what an
+ENSP engineering degree or a BTS in civil engineering actually is.
+
+Afiri was our answer: a platform for the people both sides of that gap.
+
+## My part in it
+
+This was a **team of twenty-one**, organised into eight poles, and it is worth
+being precise about which parts were mine.
+
+**I led the business, finance, market and HR work.** Market and competitor
+analysis, the two client personas, the business model canvas, the revenue model,
+three-year financial projections and the break-even calculation, the choice of
+legal structure under OHADA, and the HR and recruitment plan. When the first
+pricing grid turned out not to cover our own cost base, I reworked it — that is
+the reason the published tiers are 30k/65k/120k FCFA rather than the 10k/20k/30k
+we started from. I was also one of the three people who wrote the final report.
+
+**On the technical side I was a member of the back-end pole**, worked with the
+security pole, reviewed the front end and made small corrections to it — and I
+built the **admin analytics dashboard** on my own.
+
+## The dashboard
+
+The dashboard is a single self-contained page served by FastAPI at `/dashboard`.
+It signs in through the API's own OAuth2 endpoint, holds the JWT in memory
+rather than in storage, and then drives five KPI counters — total users, students,
+companies, active listings, applications — from five analytics endpoints. Two
+Chart.js visualisations sit underneath: a doughnut splitting students from
+companies, and a horizontal bar chart of the five sectors posting the most roles.
+Everything re-fetches on a visible 30-second countdown.
+
+The part I care about most is not the charts, it's the access rule behind them.
+**Every analytics endpoint checks the caller's role before it touches the
+database** and returns 403 to anyone who is not an administrator. An earlier
+version did not, and the security audit caught it — fixing it meant the numbers
+on that page stopped being readable by any logged-in student.
+
+## What the platform does
+
+Students sign up, build a mini-CV — name, degree, university, skills, projects —
+and get a **short share link** that a recruiter can open without an account.
+They browse listings filtered by field, city and contract type, apply in one
+click, and track each application's status. A four-question quiz maps their
+answers onto one of ten fields and returns suggested roles, with the answers
+persisted so the result is still there on the next visit.
+
+Companies publish listings and get a dashboard counting applications per
+listing. Ownership is enforced server-side throughout: a company can only ever
+read or modify **its own** listings and the applications attached to them.
+
+## Honest notes
+
+It was built in **two weeks**, and it is an MVP in the strict sense — messaging,
+email notifications, password recovery and a native mobile app were all
+deliberately scoped out and documented as such rather than half-built.
+
+The team also ran a **security audit on its own work** and published the result:
+fifteen findings, each with a severity rating and a named remediation. Some are
+fixed; the remaining ones sit at the top of the roadmap. Auditing your own
+project and writing down what you found is uncomfortable, and I think it is the
+single most professional thing we did.
+
+## What I took from it
+
+Coordinating twenty-one people across eight poles was harder than any individual
+piece of the code. What made it work was daily check-ins and a shared repository
+— and what nearly broke it was the gap between poles, where everyone assumes
+someone else owns the join.
+
+The other lesson was commercial, and it surprised me: **our first pricing model
+was wrong, and only the financial projection revealed it.** Building the
+three-year model was not an academic exercise to satisfy a brief — it was the
+thing that showed the platform could not pay for itself at the prices we had
+picked. I would not have found that in the code.

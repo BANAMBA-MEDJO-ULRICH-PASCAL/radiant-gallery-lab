@@ -1,0 +1,96 @@
+---
+title: "Calculatrice scientifique — Deux interfaces, un seul moteur"
+pillar: "software"
+summary: "Une calculatrice scientifique en Java : vingt-sept opérations derrière deux interfaces distinctes, un menu console groupé et une fenêtre Swing à onglets. Ma part : les deux interfaces et la couche d'exceptions qui transforme chaque cas limite mathématique en erreur nommée et lisible."
+status: "in-progress"
+planned:
+  - "La reconstruire en application distribuable, et non en projet que l'on lance depuis un IDE"
+  - "Un analyseur d'expressions, pour saisir `sin(45) + 3!` au lieu de choisir les opérations dans un menu"
+  - "Un historique des calculs, et une mémoire qui survit à la fermeture de la fenêtre"
+role: "Interface console, interface Swing et couche d'exceptions (projet à deux)"
+period: "2026 — en cours"
+date: 2026-08-06
+stack:
+  - "Java 17"
+  - "Swing"
+  - "FlatLaf"
+  - "JUnit"
+results:
+  - "Vingt-sept opérations — arithmétique, fonctions trigonométriques, inverses et hyperboliques, logarithmes, factorielles, permutations et combinaisons, plus la mémoire"
+  - "Un seul moteur derrière deux interfaces indépendantes : un menu console groupé et une fenêtre Swing à six onglets, chacune ignorant l'autre"
+  - "Un type d'exception dédié avec une fabrique nommée par cas d'échec : une division par zéro et une racine carrée négative sont des erreurs distinctes, et non un même plantage générique"
+  - "Chaque bouton de l'interface graphique passe par un unique assistant, si bien que la gestion des erreurs est écrite une fois et non vingt-sept"
+links:
+  source: "https://github.com/Steve-Random/Scientific-Calculator"
+featured: false
+order: 70
+---
+
+## Le problème
+
+Une calculatrice ressemble à un exercice de débutant — jusqu'au moment où l'on
+demande ce qu'il doit se passer quand quelqu'un réclame la racine carrée de −4,
+la factorielle de 2,5 ou zéro puissance zéro. Ce ne sont pas des bugs à
+empêcher : ce sont des **entrées mathématiquement indéfinies**, et la vraie
+qualité d'une calculatrice tient à la précision avec laquelle elle le dit.
+
+C'était un projet à deux. Un camarade a construit le moteur de calcul et sa suite
+de tests JUnit. J'ai construit les deux interfaces et la couche d'erreurs entre
+les deux.
+
+## L'approche
+
+**Faire des échecs des objets de première classe.** La partie dont je suis le
+plus satisfait est la plus petite : une unique `InvalidInputException` dotée
+d'une fabrique statique nommée pour chaque manière dont les mathématiques
+refusent une réponse — `divisionByZero()`, `negativeSquareRoot()`,
+`logarithmOfNonPositive()`, `arcTrigOutOfRange()`, `negativeFactorial()`,
+`nonIntegerFactorial()`, `undefinedZeroPowerZero()`.
+
+Chacune porte l'explication dont l'utilisateur a réellement besoin : « *Factorial
+requires a whole number (non-negative integer), not a decimal.* » Le moteur ne
+compose jamais de chaîne d'erreur, et aucune interface n'a à deviner ce qui a
+échoué : l'échec sait déjà se décrire lui-même, si bien que les deux interfaces
+présentent le même message sans partager une seule ligne de code.
+
+**Deux interfaces, aucun état partagé.** L'interface console affiche un menu de
+vingt-sept opérations numérotées, groupées sous des intitulés — base,
+trigonométrie, hyperboliques, logarithmes, combinatoire, mémoire — et boucle sur
+la saisie. L'interface graphique est une fenêtre Swing organisée en six onglets
+qui reprennent exactement ces groupes, habillée avec FlatLaf pour ne pas avoir
+l'air de dater de 2003.
+
+Les deux ne parlent qu'au moteur. Aucune ne sait que l'autre existe, et c'est
+tout l'intérêt : le moteur n'a jamais eu à changer pour recevoir une interface
+graphique.
+
+**Câbler les boutons une seule fois.** Plutôt que d'attacher un écouteur à chaque
+bouton à la main, chaque bouton est enregistré via un unique assistant
+`addButton` qui reçoit un libellé et une petite interface fonctionnelle autorisée
+à lever `InvalidInputException`. Cet assistant porte le try/catch, le formatage
+du résultat et la boîte de dialogue d'erreur. **Ajouter une opération tient en
+une ligne, et elle ne peut pas oublier de gérer ses propres erreurs** — il n'y a
+qu'un seul endroit où les erreurs sont gérées. Une exception d'annulation
+distincte sépare « l'utilisateur a fermé la boîte de saisie » de « le calcul a
+échoué », si bien qu'annuler reste silencieux au lieu de devenir une erreur.
+
+## Où en est le projet
+
+Elle fonctionne, les deux interfaces marchent, et le moteur est couvert par des
+tests unitaires. Ce qu'elle n'est pas encore, c'est une **application** : on la
+lance depuis un IDE, les deux interfaces démarrent ensemble dans le même
+processus, et la mémoire est perdue à la fermeture.
+
+En faire quelque chose qu'une personne pourrait réellement télécharger et
+utiliser est mon prochain chantier dessus, et il me revient en propre : je la
+ferai passer du projet au produit.
+
+## Ce que j'en retire
+
+Concevoir la couche d'exceptions m'a davantage appris que les interfaces. Avant
+cela, je considérais les erreurs comme quelque chose que l'on détecte et que l'on
+signale ; ici, elles sont devenues quelque chose que l'on **nomme**. Dès que
+chaque échec a eu sa propre méthode de fabrique et sa propre phrase, le code
+d'interface s'est nettement simplifié — il ne restait plus rien à décider au
+moment de l'échec, puisque la décision avait déjà été prise à l'endroit qui
+comprenait les mathématiques.
