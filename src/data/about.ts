@@ -27,7 +27,7 @@ type AboutCopy = {
 
 export const aboutCopy: Record<Locale, AboutCopy> = {
   en: {
-    lead: "Computer-science trained in Yaoundé, self-taught in the rest — the web languages my syllabus skipped, and the advertising and technical SEO that bring people to what I build.",
+    lead: "Computer Science Bachelor’s candidate combining a strong academic foundation with self-taught expertise in modern web languages, technical SEO, and digital advertising to build high-performance, traffic-driving web solutions.",
     paragraphs: [
       "I came at this from two directions at once. One is formal: a computer science degree, and the fundamentals that come with it — the first year was built around C. But the languages I actually wanted to build with weren't on the syllabus, so I went and found them myself: W3Schools, the MDN docs, YouTube, and a stubborn habit of rebuilding things until they worked.",
       "That habit never went away. University gives me the theory and the discipline; most of what I use day to day I still go and research on my own, because no curriculum covers everything. The first real thing I shipped was MyTech, a twelve-page corporate site I built end to end to prove to myself I could.",
