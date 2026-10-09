@@ -69,7 +69,7 @@ export const serviceCopy: Record<Locale, Record<PillarId, ServiceCopy>> = {
     },
     ads: {
       detail:
-        "Google and Meta campaigns run end to end: structure, targeting, creative and the tracking that proves what worked. Certified across Search, Display, Measurement, Analytics and Tag Manager.",
+        "Google and Meta campaigns run end to end: structure, targeting, creative and the tracking that proves what worked. Certified in Google Ads Search, Google Ads Measurement and Google Analytics.",
       deliverables: [
         "Google Search, Display and Performance Max",
         "Facebook and Instagram campaigns",
@@ -145,7 +145,7 @@ export const serviceCopy: Record<Locale, Record<PillarId, ServiceCopy>> = {
     },
     ads: {
       detail:
-        "Campagnes Google et Meta gérées de bout en bout : structure, ciblage, création et le tracking qui prouve ce qui fonctionne. Certifié en Search, Display, Measurement, Analytics et Tag Manager.",
+        "Campagnes Google et Meta gérées de bout en bout : structure, ciblage, création et le tracking qui prouve ce qui fonctionne. Certifié Google Ads Search, Google Ads Measurement et Google Analytics.",
       deliverables: [
         "Google Search, Display et Performance Max",
         "Campagnes Facebook et Instagram",
