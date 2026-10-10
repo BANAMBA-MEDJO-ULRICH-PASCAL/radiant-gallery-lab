@@ -1,0 +1,14 @@
+{
+  "name": "cv-generator",
+  "private": true,
+  "version": "1.0.0",
+  "type": "commonjs",
+  "description": "Generates the bilingual CV in PDF and DOCX from one source of facts.",
+  "scripts": {
+    "build": "node build-pdf.js ../../public && node build-docx.js ../../build"
+  },
+  "dependencies": {
+    "docx": "^9.9.0",
+    "pdfkit": "^0.20.2"
+  }
+}
